@@ -1,0 +1,99 @@
+﻿@using ConstData
+@using ObjectInfo
+@{
+    ViewData["Title"] = "Hoàn thiện hóa đơn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    DebitDetailInfo _debitDetail = ViewBag.DebitDetailInfo != null ? ViewBag.DebitDetailInfo : new DebitDetailInfo();
+
+}
+
+<style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+
+<form class="forms-sample" id="formPayDebit">
+    <input type="text" hidden id="txtDebitId" value="@_debitDetail.Id">
+    <input type="text" hidden id="txtMemberPackgeId" value="@_debitDetail.MemberPackgeId">
+    <input type="text" hidden id="txtInvoiceId" value="@_debitDetail.InvoiceId">
+    <div class="row">
+        <div class="col-lg-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Xác nhận thanh toán nợ cho thành viên</h4>
+                    <div class="form-group">
+                        <label for="exampleInputUsername1">Số tiền cần thanh toán: </label>
+                        <input type="text" disabled class="form-control" id="txtTotalByPackge" placeholder="" value="@_debitDetail.Debit.ToString("#,##0")">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputUsername1">Hạn thanh toán:</label>
+                        <input type="text" disabled class="form-control" id="txtTotalByPackge" placeholder="" value="@_debitDetail.PaymentDeadline.ToShortDateString()">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputUsername1">Quá hạn (Ngày):</label>
+                        <input type="text" disabled class="form-control" id="txtTotalByPackge" placeholder="" value="@_debitDetail.DateLate">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputUsername1">Lệ phí quá hạn:</label>
+                        <input type="text" disabled class="form-control" id="txtFine" placeholder="" value="@_debitDetail.Fine">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary me-2">Thanh toán</button>
+                <button class="btn btn-light" onclick="window.history.back();">Quay lại</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<script>
+    //submit
+    $('#formPayDebit').on('submit', function (e) {
+        try {
+            e = window.event || e;
+            e.preventDefault();
+
+            var formData = new FormData(this);
+                
+            formData.set("DebitDetailId", $('#txtDebitId').val());
+            formData.set("MemberPackgeId", $('#txtMemberPackgeId').val());
+            formData.set("InvoiceId", $('#txtInvoiceId').val());
+            formData.set("Fine", $("#txtFine").val());
+
+            $.ajax({
+                type: 'POST',
+                url: '/goi-tap-cua-thanh-vien/hoan-thien-hoa-don',
+                data: formData,
+                beforeSend: function () {
+                },
+                contentType: false, processData: false,
+                success: function (data) {
+                    if (data != null) {
+                        if(data.success > 0){
+                            alert(data.message);
+                            setTimeout(() => {
+                                //window.location.href = "/khach-hang/danh-sach";
+                                window.history.back();
+                            }, 1000);
+                        }else{
+                            alert(data.message);
+                        }
+                    }
+                },
+                error: function (data) {
+                    console.log(data);
+                },
+                complete: function () {
+                }
+            });
+        } catch (ex) {
+            console.log(ex);
+        }
+    });
+
+</script>

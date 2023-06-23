@@ -1,0 +1,144 @@
+﻿@using ConstData
+@using ObjectInfo
+@{
+    ViewData["Title"] = "Tra cứu hóa đơn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<MemberCardInfo> _lstMember = new List<MemberCardInfo>();
+    if (ViewBag.lstMember != null)
+    {
+        _lstMember = ViewBag.lstMember;
+    }
+
+    List<StaffInfo> _lstStaff = new List<StaffInfo>();
+    if (ViewBag.lstStaff != null)
+    {
+        _lstStaff = ViewBag.lstStaff;
+    }
+
+}
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="row d-flex justify-content-between">
+                    <h4 class="card-title">Điều kiện tìm kiếm</h4>
+                    <div class="form-group">
+                        <button type="button" class="default-btn main-btn" onclick="Search();">
+                            <img src="/css/image/search_32px.png" />
+                        </button>
+                    </div>
+                </div>
+                <div class="box-search">
+                    <div class="item-search">
+                        <label for="exampleInputUsername1">Khách hàng: </label>
+                        <select id="slMember">
+                            <option value="">Tất cả</option>
+                            @foreach (var item in _lstMember)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="item-search">
+                        <label for="exampleInputUsername1">Người tạo: </label>
+                        <select id="slIssueBy">
+                            <option value="">Tất cả</option>
+                            @foreach (var item in _lstStaff)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="item-search">
+                        <label for="exampleInputUsername1">Ngày thanh toán: </label>
+                        <input type="date" id="txtIssueDate">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body" id="tb">
+                @Html.Partial("_Partial_List.cshtml")
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(document).on('keypress', function (e) {
+        if (e.which == 13) {
+            Search(1);
+        }
+    });
+
+    $(document).ready(function () {
+        $('#slMember').select2({
+            placeholder: '-- Chọn khách hàng ---',
+            allowClear: true,
+            minimumInputLength: 0,
+            language: {
+              noResults: function () {
+                return 'Không tìm thấy dữ liệu';
+              }
+            }
+        });
+
+
+        $('#slIssueBy').select2({
+            placeholder: '-- Chọn người tạo ---',
+            allowClear: true,
+            minimumInputLength: 0,
+            language: {
+              noResults: function () {
+                return 'Không tìm thấy dữ liệu';
+              }
+            }
+        });
+
+        Search(1);
+    });
+
+    function onChange_Record_on_page() {
+        Search(1);
+    }
+
+    function ChangePage(curentPage) {
+        Search(curentPage);
+    }
+
+    function Search(curentPage) {
+        var member = $('#slMember').val().trim();
+        var issueBy = $('#slIssueBy').val();
+        var issueDate = $('#txtIssueDate').val();
+
+        keySearch = member + '|' + issueBy + '|' + issueDate;
+
+        $.ajax({
+            type: "get",
+            url: "/tra-cuu-hoa-don/tim-kiem",
+            data: {
+                keysearch: keySearch,
+                curentPage: curentPage,
+                p_record_on_page: $("#cbo_record_on_page").val(),
+            },
+            beforeSend: function () {
+                SpinLoading(true);
+            },
+            success: function (data) {
+                if (data != null) {
+                    $("#tb").html(data);
+                }
+            },
+            error: function (data) {
+                console.log(data);
+            },
+            complete: function () {
+                SpinLoading(false);
+            }
+        });
+    }
+</script>

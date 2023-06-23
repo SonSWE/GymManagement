@@ -1,0 +1,142 @@
+﻿@using ObjectInfo
+@{
+    ViewData["Title"] = "Thêm mới thành vên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<TypeMemberInfo> _lstTypeMember = ViewBag.LstTypeMember != null ? ViewBag.LstTypeMember : new TypeMemberInfo();
+}
+<div class="row">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Thêm mới thành viên</h4>
+            <form class="forms-sample" id="formMemberAdd">
+                <div class="form-group">
+                    <label for="exampleInputUsername1">Tên thành viên<code>(*)</code></label>
+                    <input type="text" class="form-control" id="memberName" placeholder="Tên thành viên">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Loại thành viên<code>(*)</code></label>
+                    <select class="form-control" id="cboTypeMember">
+                        @foreach (var item in _lstTypeMember)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Ngày sinh<code>(*)</code></label>
+                    <input type="date" class="form-control" id="dpBirthday" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlSelect2">Giới tính<code>(*)</code></label>
+                    <select class="form-control" id="sex">
+                            <option value="Nữ">Nữ</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Khác">Khác</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputConfirmPassword1">Địa chỉ<code>(*)</code></label>
+                    <input type="text" class="form-control" id="address" placeholder="Địa chỉ">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputConfirmPassword1">Số điện thoại<code>(*)</code></label>
+                    <input type="text" class="form-control" id="phone" placeholder="Số diện thoại">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputConfirmPassword1">Số CMND/CCCD<code>(*)</code></label>
+                    <input type="text" class="form-control" id="identity" placeholder="Số CMND/CCCD">
+                </div>
+                <button type="submit" class="btn btn-primary me-2">Lưu</button>
+                <button class="btn btn-light" onclick="history.back();">Quay lại</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    //submit
+    $('#formMemberAdd').on('submit', function (e) {
+        try {
+            e = window.event || e;
+            e.preventDefault();
+
+            if (Validate()) {
+                var formData = new FormData(this);
+                formData.set("IdTypeMember", $("#cboTypeMember").val());
+                formData.set("Name", $("#memberName").val());
+                formData.set("Birthday", $("#dpBirthday").val());
+                formData.set("Address", $("#address").val());
+                formData.set("Sex", $("#sex").val());
+                formData.set("Phone", $("#phone").val());
+                formData.set("IdentityCard", $('#identity').val());
+
+                $.ajax({
+                    type: 'POST',
+                    enctype: "multipart/form-data",
+                    url: '/thanh-vien/them-moi',
+                    data: formData,
+                    beforeSend: function () {
+
+                    },
+                    contentType: false, processData: false,
+                    success: function (data) {
+                        if (data != null) {
+
+                            if(data.success > 0){
+                                alert(data.message);
+                                setTimeout(() => {
+                                    window.location.href = "/thanh-vien/danh-sach-thanh-vien";
+                                }, 2000);
+                            }else{
+                                alert(data.message);
+                            }
+                        }
+                    },
+                    error: function (data) {
+                        console.log(data);
+                    },
+                    complete: function () {
+
+                    }
+                });
+            }
+        } catch (ex) {
+            console.log(ex);
+        }
+    });
+
+    function Validate() {
+        if (!$("#memberName").val().trim()) {
+            alert("Tên không được để trống");
+            return false;
+        }
+        if (!$("#cboTypeMember").val()) {
+            alert("Phải chọn loại thành viên");
+            return false;
+        }
+        if (!$("#dpBirthday").val().trim()) {
+            alert("Ngày sinh không được để trống");
+            return false;
+        }
+        if (!$("#sex").val()) {
+            alert("Giới tính không được để trống");
+            return false;
+        }
+        if (!$("#address").val().trim()) {
+            alert("Địa chỉ không được để trống");
+            return false;
+        }
+        if (!$("#phone").val().trim()) {
+            alert("Sđt không được để chống");
+            return false;
+        }
+
+        if (!$("#identity").val().trim()) {
+            alert("Số CMND không được để chống");
+            return false;
+        }
+
+        return true;
+    }
+</script>

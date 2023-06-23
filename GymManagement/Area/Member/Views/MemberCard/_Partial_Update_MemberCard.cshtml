@@ -1,0 +1,382 @@
+﻿@using DataAccess
+@using ObjectInfo
+@{
+    ViewData["Title"] = "Cập nhật thông tin khách hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    MemberCardInfo _info = ViewBag.MemberCardInfo != null ? ViewBag.MemberCardInfo : new MemberCardInfo();
+}
+
+<div class="row">
+    <h4 class="main-title">QUẢN LÝ KHÁCH HÀNG > CẬP NHẬT</h4>
+</div>
+
+
+<div class="row">
+    <form id="formMemberCardSign">
+        <div class="card">
+            <div class="card-body">
+                <div class="group">
+                    <div class="title-group">
+                        <h4 class="card-title ">Thông tin cá nhân</h4>
+                        <hr >
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="flex-report">
+                                <div class="title-report">Ảnh đại diện<span class="clr-red">(*)</span>:</div>
+                                <div class="field-report">
+                                    <div class="avatar">
+                                        <input type="file" id="avatar" style="display: inline-block; width: 60%" >
+                                        <img id="preview_avt" style=" width: inherit;" src="@_info.ImgLink"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Họ và tên<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input type="text" id="txtName" autocomplete="off" value="@_info.Name">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Ngày sinh<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input type="date" id="txtBirthday" autocomplete="off" value="@(_info.Birthday.Date == DateTime.MinValue.Date ? "" : _info.Birthday.ToString("yyyy-MM-dd"))">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Số CCCD<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input type="text" id="txtIdentity" autocomplete="off" value="@_info.IdentityCard">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Nơi cấp CCCD<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input type="text" id="txtIdentityAddress" autocomplete="off" value="@_info.IdentityAddress">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Giới tính<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <select class="form-control input-width" id="slSex" name="type">
+                                                @foreach (var item in AllcodeDA.GetByCDNameCDType("MEMBERCARD", "SEX"))
+                                                {
+                                                    @if (_info.Sex == item.CDVal)
+                                                    {
+                                                        <option selected value="@item.CDVal">@item.Content</option>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@item.CDVal">@item.Content</option>
+
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Địa chỉ<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <textarea id="txtAddress" autocomplete="off" style="height: 68px !important;">@_info.Address</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Ngày cấp CCCD<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input type="date" id="txtIdentityDate" autocomplete="off" value="@(_info.IdentityDate.Date == DateTime.MinValue.Date ? "" : _info.IdentityDate.ToString("yyyy-MM-dd"))">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="group">
+                    <div class="title-group">
+                        <h4 class="card-title ">Thông tin liên hệ</h4>
+                        <hr >
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Số điện thoại<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input type="text" id="txtPhone" autocomplete="off" value="@_info.Phone">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Email</div>
+                                        <div class="field-report">
+                                            <input type="text" id="txtEmail" autocomplete="off" value="@_info.Email">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="group">
+                    <div class="title-group">
+                        <h4 class="card-title ">Thông tin khác</h4>
+                        <hr >
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Trạng thái<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <select class="form-control input-width" id="slStatus">
+                                                @foreach (var item in AllcodeDA.GetByCDNameCDType("MEMBERCARD", "STATUS"))
+                                                {
+                                                    @if (_info.Status == item.CDVal)
+                                                    {
+                                                        <option selected value="@item.CDVal">@item.Content</option>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@item.CDVal">@item.Content</option>
+
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="footer-form">
+                            <button type="submit" class="btn btn-success px-5"><i class="bx bx-home mr-1"></i>Lưu</button>
+                            <button type="button" class="btn btn-danger px-5 ml-1" onclick="cancel();"><i class="bx bx-bookmark mr-1"></i>Thoát</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="myModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="e1_14">
+            <div class="e1_15">
+                <span class="e1_16">Cảnh báo</span>
+                <div class="e1_17"></div>
+            </div>
+            <span class="close" onclick="HideModal()">&times;</span>
+        </div>
+        <div class="pb-text">
+            <span class="e1_18">Thông tin thay đổi chưa được lưu, bạn có chắc chắn muốn thoát?</span>
+
+        </div>
+
+        <div class="button-container">
+            <button type="button" class="btn btn-primary confirm-btn " onclick="GoCancel()">Đồng ý</button>
+            <div class="temp">
+                <input type="hidden" id="tmpId"/>
+            </div>
+            <button type="button" class="btn btn-secondary cancel-btn" onclick="HideModal()">Hủy</button>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    let isChange = false;
+
+    $(document).ready(function() {
+      $('input, select, textarea').change(function() {
+        isChange = true;
+      });
+    });
+
+    function cancel(){
+        if(isChange){
+            $("#myModal").show();
+        }
+        else{
+            window.history.back();
+        }
+    }
+
+    function GoCancel(){
+        window.history.back();
+    }
+
+    function HideModal(){
+        $("#myModal").hide();
+    }
+
+    //submit
+    $('#formMemberCardSign').on('submit', function (e) {
+        try {
+            e = window.event || e;
+            e.preventDefault();
+
+            if (Validate()) {
+                var formData = new FormData(this);
+
+                formData.set("Id", @_info.Id);
+
+                formData.set("Name", $("#txtName").val());
+                formData.set("Sex", $("#slSex").val());
+                formData.set("Birthday", $("#txtBirthday").val());
+                formData.set("Address", $("#txtAddress").val());
+                formData.set("IdentityCard", $("#txtIdentity").val());
+                formData.set("IdentityAddress", $("#txtIdentityAddress").val());
+                formData.set("IdentityDate", $("#txtIdentityDate").val());
+
+                formData.set("Phone", $("#txtPhone").val());
+                formData.set("Email", $("#txtEmail").val());
+
+                formData.set("Status", $("#slStatus").val());
+                formData.set("ImgLink", $("#preview_avt").attr('src'));
+               
+                formData.append("fileContent", $('#avatar').prop('files')[0]);
+                
+                
+
+                $.ajax({
+                    type: 'POST',
+                    enctype: "multipart/form-data",
+                    url: '/khach-hang/cap-nhat',
+                    data: formData,
+                    beforeSend: function () {
+                        SpinLoading(true);
+                    },
+                    contentType: false, processData: false,
+                    success: function (data) {
+                        if (data != null) {
+                            if(data.success > 0){
+                                ShowSuccess(data.message);
+
+                                setTimeout(() => {
+                                    window.location.href = "/khach-hang/danh-sach";
+                                }, 1000);
+                            }else{
+                                SpinLoading(false);
+                                ShowError(data.message);
+                            }
+                        }
+                    },
+                    error: function (data) {
+                        console.log(data);
+                    },
+                    complete: function () {
+                        SpinLoading(false);
+                    }
+                });
+            }
+        } catch (ex) {
+            console.log(ex);
+        }
+    });
+
+    $('#avatar').on('change', function(e) {
+        const file = this.files[0];
+
+        if (file){
+          let reader = new FileReader();
+          reader.onload = function(event){
+            $('#preview_avt').attr('src', event.target.result);
+          }
+          reader.readAsDataURL(file);
+        }
+    });
+
+    function Validate() {
+        //if (!$('#avatar').prop('files')[0]){
+        //    alert("Bạn phải chọn ảnh đại diện");
+        //    return false;
+        //}
+
+        if (!$('#txtName').val()){
+            ShowError("Họ và tên không được để trống");
+            return false;
+        }
+
+        if (!$('#slSex').val()){
+            ShowError("Giới tính không được để trống");
+            return false;
+        }
+        if (!$('#txtBirthday').val()){
+            ShowError("Ngày sinh không được để trống");
+            return false;
+        }
+        if (!$('#txtAddress').val()){
+            ShowError("Địa chỉ không được để trống");
+            return false;
+        }
+        if (!$('#txtIdentity').val()){
+            ShowError("Số CCCD không được để trống");
+            return false;
+        }
+        if (!$('#txtIdentityAddress').val()){
+            ShowError("Nơi cấp CCCD không được để trống");
+            return false;
+        }
+        if (!$('#txtIdentityDate').val()){
+            ShowError("Ngày cấp CCCD không được để trống");
+            return false;
+        }
+        if (!$('#txtPhone').val()){
+            ShowError("Số điện thoại không được để trống");
+            return false;
+        }
+        if (!$('#slStatus').val()){
+            ShowError("Trạng thái không được để trống");
+            return false;
+        }
+        return true;
+    }
+</script>

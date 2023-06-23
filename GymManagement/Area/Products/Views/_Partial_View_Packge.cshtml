@@ -1,0 +1,33 @@
+﻿@using ObjectInfo
+@{
+    ViewData["Title"] = "Thông tin chi tiết gói tập";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    PackgeInfo _info = ViewBag.PackgeInfo != null ? ViewBag.PackgeInfo : new PackgeInfo();
+}
+<div class="row">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Thông tin chi tiết gói tập</h4>
+            <form class="forms-sample">
+                <div class="form-group">
+                    <label for="name">Tên gói<code>(*)</code></label>
+                    <input type="text" class="form-control" id="name" placeholder="Tên gói tập" value="@_info.Name">
+                </div>
+                <div class="form-group">
+                    <label for="price">Giá(/ 1 tháng)<code>(*)</code></label>
+                    <input type="text" class="form-control" id="price" placeholder="Giá" value="@_info.Price">
+                </div>
+                <div class="form-group">
+                    <label for="discount">Giảm giá(đơn vị %)<code>(*)</code></label>
+                    <input type="text" class="form-control" id="discount" value="0" value="@_info.Discount">
+                </div>
+                <div class="form-group">
+                    <label for="description">Mô tả</label>
+                    <textarea class="form-control" id="description" rows="3" value="@_info.Description"></textarea>
+                </div>
+                <button class="btn btn-light" onclick="location.href = '/goi-tap/danh-sach';">Quay lại</button>
+            </form>
+        </div>
+    </div>
+</div>

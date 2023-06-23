@@ -1,0 +1,51 @@
+﻿@using ObjectInfo
+@using ConstData;
+@{
+    List<PackgeInfo> _lstData = ViewBag.LstPackge != null ? ViewBag.LstPackge : new List<PackgeInfo>();
+}
+<h4 class="card-title">Kết quả tìm kiếm</h4>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Tên</th>
+                <th>Mô tả</th>
+                <th>Giảm giá</th>
+                <th>Giá / 1 tháng</th>
+                <th>Chức năng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (_lstData != null && _lstData.Count > 0)
+            {
+                foreach (var item in _lstData)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Description</td>
+                        <td>@item.Discount</td>
+                        <td>@item.Price</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon">
+                                <i class="mdi mdi-delete text-danger">Xóa</i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon" onclick="location.href = '/goi-tap/chi-tiet/@item.Id'">
+                                <i class="mdi mdi-file-find text-dark">Xem</i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon" onclick="location.href = '/goi-tap/cap-nhat/@item.Id'">
+                                <i class="mdi mdi-border-color text-dark">Sửa</i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td>Không có dữ liện</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>

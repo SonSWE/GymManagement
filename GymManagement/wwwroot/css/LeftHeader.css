@@ -1,0 +1,37 @@
+﻿.vertical-menu {
+    background-color: #15202b;
+}
+
+.img-menu {
+    max-width: 160px;
+}
+
+.nav {
+    display: flex;
+    margin: 0 auto;
+    font-family: inherit;
+}
+
+.navbar-nav > li:hover {
+    background-color: #ff8a3b;
+    border-radius: 4px;
+}
+
+.active-nav {
+    background-color: #ff8a3b;
+    border-radius: 4px;
+}
+
+.dropdown-menu-vertical:hover {
+    color: #ff8a3b !important;
+    background-color: transparent;
+}
+
+.active-dropdown {
+    color: #ff8a3b !important;
+    background-color: transparent;
+}
+
+.toast-confirm {
+    background-color: #36bdf7;
+}

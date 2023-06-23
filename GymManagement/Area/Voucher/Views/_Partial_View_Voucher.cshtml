@@ -1,0 +1,51 @@
+﻿@using ObjectInfo
+@using ConstData;
+@{
+    ViewData["Title"] = "Xem chi tiết mã giảm giá";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    VoucherPackgeInfo _info = ViewBag.VoucherInfo != null ? ViewBag.VoucherInfo : new VoucherPackgeInfo();
+}
+<div class="row">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Thông tin chi tiết mã giảm giá</h4>
+            <form class="forms-sample" id="formVoucherAdd">
+                <div class="form-group">
+                    <label for="exampleInputUsername1">Mã giảm giá: <code>(*)</code></label>
+                    <input disabled type="text" class="form-control" id="txtVoucherCode" placeholder="Nhập mã giảm giá" value="@_info.Code">
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleInputConfirmPassword1">Giá trị giảm giá: <code>(*)</code></label>
+                    @if (_info.VoucherType == VoucherType.PhanTram)
+                    {
+                        <input disabled type="text" class="form-control" id="txtDiscount" placeholder="" value="@_info.Discount.ToString("#,##0")">
+                    }
+                    else if (_info.VoucherType == VoucherType.Tien)
+                    {
+                        <input disabled type="text" class="form-control" id="txtDiscount" placeholder="" value="@_info.Discount %">
+                    }
+
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputConfirmPassword1">Số lượng: <code>(*)</code></label>
+                    <input disabled type="text" class="form-control" id="txtVoucherCount" placeholder="" value="@_info.Count">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Ngày hiệu lực: <code>(*)</code></label>
+                    <input disabled type="text" class="form-control" id="dpOpenDay" placeholder="" value="@_info.OpenTime.ToString("dd/MM/yyyy HH:MM")">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Ngày hết hạn: <code>(*)</code></label>
+                    <input disabled type="text" class="form-control" id="dpCloseDay" placeholder="" value="@_info.CloseTime.ToString("dd/MM/yyyy HH:MM")">
+                </div>
+                <div class="form-group">
+                    <label for="description">Mô tả</label>
+                    <textarea disabled class="form-control" id="txtDescription" rows="3" >@_info.Description</textarea>
+                </div>
+                <button class="btn btn-light" onclick="history.back();">Quay lại</button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,75 @@
+﻿@using DataAccess
+@using ObjectInfo
+@using ConstData;
+@{
+    List<InvoiceInfo> _lstData = ViewBag.LstData != null ? ViewBag.LstData : new List<InvoiceInfo>();
+
+    int _record_on_page = 10;
+    if (ViewBag.Record_On_Page != null)
+    {
+        _record_on_page = ViewBag.Record_On_Page;
+    }
+}
+<div class="d-flex">
+    <h4 class="card-title">Kết quả tìm kiếm</h4>
+    <div class="show-record">
+        Hiển thị
+        <select onchange="onChange_Record_on_page()" id="cbo_record_on_page">
+            @foreach (var item in AllcodeDA.GetByCDNameCDType("DISPLAY", "RECORD_ON_PAGE"))
+            {
+                <option @(item.CDVal == _record_on_page.ToString() ? "selected" : "") value="@item.CDVal">@item.Content</option>
+            }
+        </select>
+        bản ghi
+    </div>
+</div>
+<div class="main-table-responsive">
+    <table>
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Mã hóa đơn</th>
+                <th>Tên khách hàng</th>
+                <th>Tên gói tập</th>
+                <th>Thời hạn (tháng)</th>
+                <th>Tổng tiền (vnđ)</th>
+                <th>Người tạo</th>
+                <th>Ngày tạo</th>
+                <th>Chức năng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (_lstData != null && _lstData.Count > 0)
+            {
+                foreach (var item in _lstData)
+                {
+                    <tr>
+                        <td class="text-center">@item.STT</td>
+                        <td>@item.Code</td>
+                        <td>@item.MemberName</td>
+                        <td>@item.PackgeName</td>
+                        <td class="text-right">@item.PackgePeriod</td>
+                        <td class="text-right">@item.Total.ToString("#,##0")</td>
+                        <td>@item.InvoiceIssuer</td>
+                        <td class="text-center">@item.IssuDate</td>
+                        <td class="text-center">
+                            <div class="divButton">
+                                <button class="button-table" onclick="location.href = '/tra-cuu-hoa-don/in-hoa-don/@item.Id'"><img src="/css/image/print.png" /></button>
+                                <div class="tooltip-table">In hóa đơn</div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>Không có dữ liện</tr>
+            }
+
+        </tbody>
+    </table>
+</div>
+
+<div class="foot-record">
+    @Html.Raw(ViewBag.Paging)
+</div>

@@ -1,0 +1,71 @@
+﻿@using ObjectInfo
+@using ConstData;
+@{
+    List<MemberPackgeInfo> _lstData = ViewBag.LstPackgeOfMember != null ? ViewBag.LstPackgeOfMember : new List<MemberPackgeInfo>();
+}
+<h4 class="card-title">Kết quả tìm kiếm</h4>
+<div class="main-table-responsive">
+    <table>
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Tên gói tập</th>
+                <th>Trạng thái</th>
+                <th>Thời hạn (ngày)</th>
+                <th>Thời hạn (tháng)</th>
+                <th>Chức năng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (_lstData != null && _lstData.Count > 0)
+            {
+                foreach (var item in _lstData)
+                {
+                    <tr>
+                        <td  class="text-center">@item.STT</td>
+                        <td>@item.PackgeName</td>
+                        <td>@item.StatusText</td>
+                        @if( item.DaysLeft < 0)
+                        {
+                            <td class="text-right">0</td>
+                        }
+                        else
+                        {
+                            <td class="text-right">@item.DaysLeft</td>
+                        }
+                        @if( item.MonthsLeft < 0)
+                        {
+                            <td class="text-right">0</td>
+                        }
+                        else
+                        {
+                            <td class="text-right">@item.MonthsLeft</td>
+                        }
+                        <td class="content-center">
+                            @if (item.Status == MemberPackgeStatus.HoatDong)
+                            {
+                                <div class="divButton">
+                                    <button class="button-table" onclick="location.href = '/goi-tap-cua-thanh-vien/gia-han-goi-tap/@item.Id'">
+                                        <img src="/css/image/up_32px.png" />
+                                    </button>
+                                    <div class="tooltip-table">Gia hạn</div>
+                                </div>
+                            }
+                            @*else if (@item.Status == MemberPackgeStatus.Khoa || @item.Status == MemberPackgeStatus.HoatDongGhiNo)
+                            {
+                                <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon" onclick="location.href = '/goi-tap-cua-thanh-vien/hoan-thien-hoa-don/@item.Id'">
+                                    <i class="mdi mdi-border-color text-dark">Thanh toán</i>
+                                </button>
+                            }*@
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>Không có dữ liện</tr>
+            }
+
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,114 @@
+﻿@{
+    string idActive = ViewBag.MenuActive != null ? ViewBag.MenuActive : "-1";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Quản lý phòng tập </title>
+
+    <link rel="stylesheet" href="~/images/js/select.dataTables.min.css">
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <!-- endinject -->
+
+    <link rel="stylesheet" href="~/lib/fontawesome-free-6.4.0-web/css/all.css">
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/style.css">
+    <link rel="stylesheet" href="~/css/LeftHeader.css">
+
+    <link rel="stylesheet" href="~/lib/select2/dist/css/select2.min.css">
+
+</head>
+<body>
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @*<script src="~/vendors/js/vendor.bundle.base.js"></script>*@
+    <script src="~/js/site.js"></script>
+    <script src="~/lib/jquery-printarea/jquery.printarea.js"></script>
+    <script src="~/lib/select2/dist/js/select2.min.js"></script>
+
+
+
+    <div class="container-scroller">
+        <div class="container-fluid page-body-wrapper" style="padding: 0;">
+            @Html.Partial("~/Views/Shared/_header.cshtml")
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div id="divLoader" class="loader-layer" style="display: none;">
+        <div class="loader"></div>
+    </div>
+
+    <div id="notify_success" class="toast toast-confirm position-fixed bottom-0 end-0 m-3" role="alert" aria-live="assertive"
+         aria-atomic="true">
+        <div class="toast-header toast-confirm w-100 justify-content-between">
+            <strong>
+                <i class="fa-regular fa-circle-check text-light fs-2"></i>
+            </strong>
+            <div class="toast-body text-light" id="content_Notification"></div>
+            <button type="button" class="btn-close mb-4" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+
+    <div id="notify_error" class="toast toast-warning position-fixed bottom-0 end-0 m-3"
+         role="alert"
+         aria-live="assertive"
+         aria-atomic="true">
+        <div class="toast-header toast-warning w-100 justify-content-between">
+            <strong>
+                <i class="fa-regular fa-circle-xmark text-light fs-2"></i>
+            </strong>
+            <div class="toast-body text-light" id="content_error"></div>
+            <button type="button"
+                    class="btn-close mb-5"
+                    data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+        </div>
+    </div>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+
+        function ShowSuccess(notify){
+            $('#content_Notification').text(notify);
+            const toast = new bootstrap.Toast($("#notify_success").get(0));
+            toast.show();
+        }
+
+        function ShowError(notify){
+            $('#content_error').text(notify);
+            const toast = new bootstrap.Toast($("#notify_error").get(0));
+            toast.show();
+        }
+
+
+        $(document).ready(function() {
+            if(@idActive != '-1'){
+                const menu = $("#@idActive");
+
+                if (menu.prop("tagName") === "A") {
+                    menu.addClass("active-dropdown");
+
+                    menu.parent().parent().parent().addClass("active-nav");
+                }
+                else{
+                    menu.addClass("active-nav");
+                }
+            }
+        });
+    </script>
+</body>
+</html>

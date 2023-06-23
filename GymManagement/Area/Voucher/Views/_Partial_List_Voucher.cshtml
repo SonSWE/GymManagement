@@ -1,0 +1,84 @@
+﻿@using ObjectInfo
+@using ConstData;
+@{
+    List<VoucherPackgeInfo> _lstData = ViewBag.LstData != null ? ViewBag.LstData : new List<VoucherPackgeInfo>();
+}
+<h4 class="card-title">Kết quả tìm kiếm</h4>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Mã giảm giá</th>
+                <th>Loại giảm giá</th>
+                <th>Giảm giá</th>
+                <th>Số lượng</th>
+                <th>Ngày bắt đầu</th>
+                <th>Ngày hết hạn</th>
+                <th>Trạng thái</th>
+                <th>Chức năng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (_lstData != null && _lstData.Count > 0)
+            {
+                foreach (var item in _lstData)
+                {
+                    <tr>
+                        <td>@item.Code</td>
+                        
+                        @if(item.VoucherType == VoucherType.PhanTram)
+                        {
+                            <td>Phần trăm</td>
+                            <td>@item.Discount %</td>
+                        }
+                        else if(item.VoucherType == VoucherType.Tien)
+                        {
+                            <td>Trừ tiền trực tiếp</td>
+                            <td>@item.Discount.ToString("#,##0") đ</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                            <td></td>
+                        }
+                        <td>@item.Count</td>
+                        <td>@item.OpenTime.ToString("dd/MM/yyy HH:mm")</td>
+                        <td>@item.CloseTime.ToString("dd/MM/yyy HH:mm")</td>
+                        
+                        @if(item.Status == VoucherStatus.HieuLuc)
+                        {
+                            <td>Hiệu lực</td>
+                        }
+                        else if(item.Status == VoucherStatus.HetHieuLuc)
+                        {
+                            <td>Hết hiệu lực</td>
+                        }
+                        else if(item.Status == VoucherStatus.HetLuot)
+                        {
+                            <td>Hết lượt sử dụng</td>
+                        }
+
+                        <td>
+                            <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon">
+                                <i class="mdi mdi-delete text-danger">Xóa</i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon" onclick="location.href = '/ma-giam-gia/chi-tiet/@item.Code'">
+                                <i class="mdi mdi-file-find text-dark">Xem</i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon" onclick="location.href = '/ma-giam-gia/cap-nhat/@item.Code'">
+                                <i class="mdi mdi-border-color text-dark">Sửa</i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td>Không có dữ liện</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>

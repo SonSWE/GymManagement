@@ -1,0 +1,139 @@
+﻿@using ObjectInfo
+@{
+    ViewData["Title"] = "Thêm mới mã giảm giá";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+
+<div class="row">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Thêm mới Mã giảm giá</h4>
+            <form class="forms-sample" id="formVoucherAdd">
+                <div class="form-group">
+                    <label for="exampleInputUsername1">Mã giảm giá: <code>(*)</code></label>
+                    <input type="text" class="form-control" id="txtVoucherCode" placeholder="Nhập mã giảm giá">
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlSelect2">Loại mã giảm giá: <code>(*)</code></label>
+                    <select class="form-control" id="cboVoucherType">
+                            <option value="1">Phần trăm</option>
+                            <option value="2">Trừ tiền</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputConfirmPassword1">Giá trị giảm giá: <code>(*)</code></label>
+                    <input type="number" class="form-control" id="txtDiscount" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputConfirmPassword1">Số lượng: <code>(*)</code></label>
+                    <input type="number" class="form-control" id="txtVoucherCount" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Ngày hiệu lực: <code>(*)</code></label>
+                    <input type="date" class="form-control" id="dpOpenDay" placeholder="">
+                </div>
+                 <div class="form-group">
+                    <label for="exampleInputPassword1">Ngày hết hạn: <code>(*)</code></label>
+                    <input type="date" class="form-control" id="dpCloseDay" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="description">Mô tả</label>
+                    <textarea class="form-control" id="txtDescription" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary me-2">Lưu</button>
+                <button class="btn btn-light" onclick="history.back();">Quay lại</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    //submit
+    $('#formVoucherAdd').on('submit', function (e) {
+        try {
+            e = window.event || e;
+            e.preventDefault();
+
+            if (Validate()) {
+                var formData = new FormData(this);
+                formData.set("VoucherCode", $("#txtVoucherCode").val());
+                formData.set("VoucherType", $("#cboVoucherType").val());
+                formData.set("VoucherCount", $("#txtVoucherCount").val());
+                formData.set("Discount", $("#txtDiscount").val());
+                formData.set("OpenTime", $("#dpOpenDay").val());
+                formData.set("CloseTime", $("#dpCloseDay").val());
+                formData.set("Description", $('#txtDescription').val());
+
+                $.ajax({
+                    type: 'POST',
+                    enctype: "multipart/form-data",
+                    url: '/ma-giam-gia/them-moi',
+                    data: formData,
+                    beforeSend: function () {
+
+                    },
+                    contentType: false, processData: false,
+                    success: function (data) {
+                        if (data != null) {
+
+                            if(data.success > 0){
+                                alert(data.message);
+                                setTimeout(() => {
+                                    window.location.href = "/ma-giam-gia/danh-sach";
+                                }, 1000);
+                            }else{
+                                alert(data.message);
+                            }
+                        }
+                    },
+                    error: function (data) {
+                        console.log(data);
+                    },
+                    complete: function () {
+
+                    }
+                });
+            }
+        } catch (ex) {
+            console.log(ex);
+        }
+    });
+
+    function Validate() {
+        if (!$("#txtVoucherCode").val().trim()) {
+            alert("Mã giảm giá không được để trống!");
+            return false;
+        }
+        if (!$("#cboVoucherType").val().trim()) {
+            alert("Bạn phải chọn loại mã giảm giá!");
+            return false;
+        }
+        if (!$("#txtDiscount").val()) {
+            alert("Giá trị giảm giá không được để trống");
+            return false;
+        }
+        if (!$("#txtVoucherCount").val() || $("#txtVoucherCount").val() <= 0) {
+            alert("Số lượng không được để trống");
+            return false;
+        }
+        if (!$("#dpOpenDay").val().trim()) {
+            alert("Ngày hiệu lực không được để trống");
+            return false;
+        }
+        if (!$("#dpCloseDay").val().trim()) {
+            alert("Ngày hết hạn không được để chống");
+            return false;
+        }
+
+        return true;
+    }
+</script>

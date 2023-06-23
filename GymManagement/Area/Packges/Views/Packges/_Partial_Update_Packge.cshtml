@@ -1,0 +1,130 @@
+﻿@using ConstData
+@using ObjectInfo
+@{
+    ViewData["Title"] = "Cập nhật thông tin gói tập";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    PackgeInfo _info = ViewBag.PackgeInfo != null ? ViewBag.PackgeInfo : new PackgeInfo();
+}
+<div class="row">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Cập nhật thông tin gói tập</h4>
+            <form class="forms-sample" id="formPackgeUpdate">
+                <input hidden id="tmpId" value="@_info.Id"/>
+                <div class="form-group">
+                    <label for="name">Tên gói<code>(*)</code></label>
+                    <input type="text" class="form-control" id="name" placeholder="Tên gói tập" value="@_info.Name">
+                </div>
+                <div class="form-group">
+                    <label for="price">Giá<code>(*)</code></label>
+                    <input type="text" class="form-control" id="price" placeholder="Giá" value="@_info.Price">
+                </div>
+                <div class="form-group">
+                    <label for="discount">Giảm giá(đơn vị %)<code>(*)</code></label>
+                    <input type="text" class="form-control" id="discount" value="0" value="@_info.Discount">
+                </div>
+                <div class="form-group">
+                    <label for="description">Mô tả</label>
+                    <textarea class="form-control" id="description" rows="3" value="@_info.Description"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary me-2">Lưu</button>
+                <button class="btn btn-light" onclick="location.href = '/goi-tap/danh-sach';">Quay lại</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    //submit
+    $("#price").on("input", function(){
+        try{
+            var value = parseInt($(this).val());
+            if(value <= 0){
+                alert('giá phải lớn hơn 0!');
+                return;
+            }
+        }catch(e){
+            alert('giá phải là số nguyên!');
+            return;
+        }
+    });
+
+    $("#discount").on("input", function(){
+        try{
+            var value = parseInt($(this).val());
+            if(value <= 0){
+                alert('Phần trăm giảm giá phải lớn hơn 0!');
+                return;
+            }
+        }catch(e){
+            alert('Phần trăm giảm giá là số nguyên!');
+            return;
+        }
+    });
+    //submit
+    $('#formPackgeUpdate').on('submit', function (e) {
+        try {
+            e = window.event || e;
+            e.preventDefault();
+
+            if (Validate()) {
+                var formData = new FormData(this);
+                formData.set("Id", $("#tmpId").val());
+                formData.set("Name", $("#name").val());
+                formData.set("Description", $("#description").val());
+                formData.set("Discount", parseInt($("#discount").val()) / 100);
+                formData.set("Price", $("#price").val());
+               
+                $.ajax({
+                    type: 'PUT',
+                    enctype: "multipart/form-data",
+                    url: '/goi-tap/cap-nhat',
+                    data: formData,
+                    beforeSend: function () {
+
+                    },
+                    contentType: false, processData: false,
+                    success: function (data) {
+                        if (data != null) {
+
+                            if(data.success > 0){
+                                alert(data.message);
+                                setTimeout(() => {
+                                    window.location.href = "/goi-tap/danh-sach";
+                                }, 2000);
+                            }else{
+                                alert(data.message);
+                            }
+                        }
+                    },
+                    error: function (data) {
+                        console.log(data);
+                    },
+                    complete: function () {
+
+                    }
+                });
+            }
+        } catch (ex) {
+            console.log(ex);
+        }
+    });
+
+    function Validate() {
+        if (!$("#name").val().trim()) {
+            alert("Tên không được để trống!");
+            return false;
+        }
+        if (!$("#price").val()) {
+            alert("Giá không được để trống!");
+            return false;
+        }
+        if (!$("#discount").val().trim()) {
+            alert("Giảm giá không được để trống!");
+            return false;
+        }
+
+        return true;
+    }
+</script>

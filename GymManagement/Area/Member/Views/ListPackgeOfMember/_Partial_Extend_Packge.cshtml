@@ -1,0 +1,333 @@
+﻿@model MemberPackgeInfo
+@using ConstData
+@using ObjectInfo
+@{
+    ViewData["Title"] = "Gia hạn gói tập";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    PackgeInfo _packgeInfo = ViewBag.PackgeInfo != null ? ViewBag.PackgeInfo : new PackgeInfo();
+
+    MemberCardInfo _memberCard = ViewBag.MemberCardInfo != null ? ViewBag.MemberCardInfo : new MemberCardInfo();
+
+}
+
+<style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+<input type="text" hidden id="txtIdMemberPackge" value="@ViewBag.IdMemberPackge">
+
+<form class="forms-sample" id="formPackgeExtend">
+    <div class="row">
+        <div class="col-lg-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Thông tin thành viên</h4>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="exampleInputUsername1">Mã thẻ</label>
+                                <input type="text" disabled class="form-control" id="txtMemberCardId" placeholder="" value="@_memberCard.Id">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group ">
+                                <label for="exampleInputUsername1">Tên thành viên</label>
+                                <input type="text" disabled class="form-control" id="txtMemberName" placeholder="" value="@_memberCard.Name">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="exampleInputUsername1">Loại thành viên</label>
+                                <input type="text" disabled class="form-control" id="txtMemberTypeText" placeholder="" value="@_memberCard.TypeMemberName">
+                                <input type="text" hidden id="txtMemberType" value="@_memberCard.TypeMemberId">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="exampleInputUsername1">Giảm giá thành viên(%)</label>
+                                <input type="text" disabled class="form-control" id="txtMemberDiscount" placeholder="" value="@_memberCard.Discount">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Gói tập</h4>
+                    <p class="card-description">Thông tin gói gia hạn</p>
+                    <div class="form-group row">
+                        <div class="col-8">
+                            <label for="exampleInputPassword1">Chọn gói<code>(*)</code>:</label>
+                            <select disabled class="form-control" id="cbdPackge" onchange="onChangePackge();">
+                                <option value="@_packgeInfo.Id">@_packgeInfo.Name-@_packgeInfo.PriceAfterDiscount</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Chọn thời hạn<code>(*)</code>:</label>
+                        <select class="form-control" id="cboBondPeriod" onchange="onChangePackge();">
+                            <option value="1" selected>1 tháng</option>
+                            <option value="5">5 tháng</option>
+                            <option value="12">1 năm</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputUsername1">Tổng tiền:</label>
+                        <input type="text" disabled class="form-control" id="txtTotalByPackge" placeholder="" value="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Thanh toán</h4>
+                    <p class="card-description">Sử dụng mã giảm giá</p>
+                    <div class="form-group row">
+                        <label for="exampleInputUsername1">Mã giả giá:</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="txtVoucherCode" placeholder="Nhập mã giảm giá">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-sm btn-primary" onclick="getInfoVoucher();">Áp dụng</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" disabled class="form-control" id="txtVourcherContent" placeholder="">
+                        <input type="text" id="txtVourcherDiscount" hidden>
+                    </div>
+                    <p class="card-description">Thông tin thanh toán</p>
+                    <div class="d-flex flex-column dis">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <p>Giảm giá voucher (đ)</p>
+                            <p id="txtDiscountByVoucher">0</p>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <p>Giảm giá thành viên (đ)</p>
+                            <p id="txtDiscountByMember">0</p>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <p>Tổng giảm (đ)</p>
+                            <p id="txtTotalDiscount">0</p>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <p>Thành tiền (đ)</p>
+                            <p id="txtTotalPrice"></p>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <p style="width: 300px">Tiền khách trả (đ)<code>(*)</code></p>
+                            <p id="">
+                                <input type="number" class="form-control" id="txtCash" placeholder="" value="0" onblur="onChangeGhiNo();">
+                            </p>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <p>Ghi nợ (đ)</p>
+                            <p id="txtDebit"></p>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary me-2">Thanh toán</button>
+                <button class="btn btn-light" onclick="window.history.back();">Quay lại</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<script>
+
+    $(document).ready(function(){
+        onChangePackge();
+    });
+
+    function handleTotal(){
+        let _discountByVoucher = $('#txtDiscountByVoucher').text() == '0' ? '' :parseInt($('#txtDiscountByVoucher').text()) ;
+        //tính giảm giá của thành viên
+        let _discountByMember = $('#txtTotalByPackge').val() * ($('#txtMemberDiscount').val()/100);
+        $('#txtDiscountByMember').text('');
+        $('#txtDiscountByMember').text(_discountByMember);
+
+        //tính tổng giảm giá
+        let _sumDiscount = _discountByVoucher +parseInt($('#txtDiscountByMember').text()) ;
+        $('#txtTotalDiscount').text('');
+        $('#txtTotalDiscount').text(_sumDiscount);
+        parseInt()
+        //tính thành tiền
+        let _totalPrice = $('#txtTotalByPackge').val() - parseInt($('#txtTotalDiscount').text()) ;
+        $('#txtTotalPrice').text('');
+        $('#txtTotalPrice').text(_totalPrice);
+    }
+
+    function onChangeGhiNo(){
+        let _debit = parseInt($('#txtTotalPrice').text()) - $('#txtCash').val();
+        $('#txtDebit').text('');
+        $('#txtDebit').text(_debit);
+    }
+
+    function onChangePackge()
+    {
+        let text = $( "#cbdPackge option:selected" ).text().split('-');
+        let _packgePrice = text[1] * $('#cboBondPeriod').val();
+        //let _discount =
+
+        $('#txtTotalByPackge').val(_packgePrice);
+
+        $('#txtTotalByPackge').val(_packgePrice);
+        handleTotal();
+    }
+
+    function getInfoVoucher()
+    {
+       try {
+           let _discount = 0;
+           if($('#txtVoucherCode').val() ==  '' || $('#txtVoucherCode').val() == undefined){
+               return;
+           }
+
+           $.ajax({
+                    type: 'GET',
+                    enctype: "multipart/form-data",
+                    url: '/goi-tap-cua-thanh-vien/tim-ma-giam-gia',
+                    data: {
+                        code : $('#txtVoucherCode').val()
+                    },
+                    success: function (data) {
+                        if(data.success > 0 && data.jsonData != null){
+                            var _voucher = JSON.parse(data.jsonData);
+
+                            if(_voucher.Code != null && _voucher.Count > 0 && _voucher.Status == '@VoucherStatus.HieuLuc'){
+                                $('#txtVourcherContent').val(_voucher.Description);
+
+                                
+                                if(_voucher.VoucherType == @VoucherType.PhanTram){
+                                     _iscount = $('#txtTotalByPackge').val() * _voucher.Discount/100;
+                                }else if(_voucher.VoucherType == @VoucherType.Tien){
+                                     _discount = _voucher.Discount;
+                                }
+                                
+                                $('#txtDiscountByVoucher').text('');
+                                $('#txtDiscountByVoucher').text(_discount);
+                                handleTotal();
+
+                                alert('Sử dụng mã giảm giá thành công!');
+
+                            }else{
+                                alert('Mã giảm giá không tồn tại hoặc đã hết lượt/hạn sử dụng!');
+                            }
+                        }else{
+                            alert('Mã giảm giá không tồn tại!');
+                        }
+
+                    },
+                    error: function (data) {
+                        console.log(data);
+                    }
+             });
+
+        } catch (ex) {
+            console.log(ex);
+        }
+    }
+
+
+    //submit
+    $('#formPackgeExtend').on('submit', function (e) {
+        try {
+            e = window.event || e;
+            e.preventDefault();
+
+            if (Validate()) {
+                var formData = new FormData(this);
+                
+                formData.set("Cash", $('#txtCash').val());
+                formData.set("Discount", parseInt($('#txtTotalDiscount').text()));
+                formData.set("Total", $('#txtTotalByPackge').val());
+                formData.set("PackgePeriod", $("#cboBondPeriod").val());
+
+                if( parseInt($('#txtDebit').text()) > 0){
+                    formData.set("InvoiceType", 1);
+                }
+                else{
+                    formData.set("InvoiceType", 0);
+                }
+                formData.set("Voucher", $('#txtVoucherCode').val());
+                formData.append("_memberPackge.Id", @Model.Id);
+                formData.append("_memberPackge.UnActiveDay", '@Model.UnActiveDay.ToString("yyyy-MM-dd hh:mm:ss")' );
+
+                $.ajax({
+                    type: 'POST',
+                    enctype: "multipart/form-data",
+                    url: '/goi-tap-cua-thanh-vien/thanh-toan',
+                    data: formData,
+                    beforeSend: function () {
+
+                    },
+                    contentType: false, processData: false,
+                    success: function (data) {
+                        if (data != null) {
+
+                            if(data.success > 0){
+                                alert(data.message);
+                                setTimeout(() => {
+                                    //window.location.href = "/khach-hang/danh-sach";
+                                    history.back();
+                                }, 1000);
+                            }else{
+                                alert(data.message);
+                            }
+                        }
+                    },
+                    error: function (data) {
+                        console.log(data);
+                    },
+                    complete: function () {
+
+                    }
+                });
+            }
+        } catch (ex) {
+            console.log(ex);
+        }
+    });
+
+    function Validate() {
+        var _cashToHand = parseInt( $("#txtCash").val());
+        var _totalPrice = parseInt( $("#txtTotalPrice").text());
+        var _cashValid = _totalPrice;
+
+        _cashValid = _totalPrice * 0.7;
+
+        if (!_cashToHand) {
+            alert("Tiền khách trả không được để trống!");
+            return false;
+        }
+       if (_cashToHand > _totalPrice) {
+            alert("Tiền khách trả không được lớn hơn tổng tiền!");
+            return false;
+        }
+        if (_cashToHand < _cashValid) {
+            alert("Tiền khách trả cần lớn hơn 70% tổng tiền (cần trả ít nhất " + _cashValid + ")");
+            return false;
+        }
+        if (!$("#cbdPackge").val()) {
+            alert("Bạn phải chọn gói tập");
+            return false;
+        }
+         if (!$("#cboBondPeriod").val()) {
+            alert("Bạn phải chọn thời hạn!");
+            return false;
+        }
+
+        return true;
+    }
+</script>

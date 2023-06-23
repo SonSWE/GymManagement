@@ -1,0 +1,64 @@
+﻿@using ObjectInfo
+@using ConstData;
+@{
+    List<MemberInfo> _lstData = ViewBag.LstMember != null ? ViewBag.LstMember : new List<MemberInfo>();
+}
+<h4 class="card-title">Kết quả tìm kiếm</h4>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Tên</th>
+                <th>Ngày sinh</th>
+                <th>Giới tính</th>
+                <th>Địa chỉ</th>
+                <th>SĐT</th>
+                <th>Loại thành viên</th>
+                <th>Chức năng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (_lstData != null && _lstData.Count > 0)
+            {
+                foreach (var item in _lstData)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Birthday.ToString("dd/MM/yyyy")</td>
+                        <td>@item.Sex</td>
+                        <td>@item.Address</td>
+                        <td>@item.Phone</td>
+                        @if (@item.IdTypeMember == TypeMember.Normal)
+                        {
+                            <td class="text-danger"> @item.TypeMemberText</td>
+                        }
+                        else if (@item.IdTypeMember == TypeMember.Normal)
+                        {
+                            <td class="text-danger"> @item.TypeMemberText</td>
+                        }
+                        else if (@item.IdTypeMember == TypeMember.Normal)
+                        {
+                            <td class="text-danger"> @item.TypeMemberText</td>
+                        }
+                        <td>
+                            <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon" >
+                                <i class="mdi mdi-delete text-danger">Xóa</i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon" onclick="location.href = '/thanh-vien/chi-tiet/@item.Id'">
+                                <i class="mdi mdi-file-find text-dark">Xem</i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon" onclick="location.href = '/thanh-vien/cap-nhat/@item.Id'">
+                                <i class="mdi mdi-border-color text-dark">Sửa</i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>Không có dữ liện</tr>
+            }
+
+        </tbody>
+    </table>
+</div>
