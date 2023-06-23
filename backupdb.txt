@@ -1,0 +1,1732 @@
+USE [master]
+GO
+/****** Object:  Database [GymManagement]    Script Date: 23/06/2023 5:10:56 PM ******/
+CREATE DATABASE [GymManagement]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'GymManagement', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\GymManagement.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'GymManagement_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\GymManagement_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+ WITH CATALOG_COLLATION = DATABASE_DEFAULT
+GO
+ALTER DATABASE [GymManagement] SET COMPATIBILITY_LEVEL = 150
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [GymManagement].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [GymManagement] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [GymManagement] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [GymManagement] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [GymManagement] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [GymManagement] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [GymManagement] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [GymManagement] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [GymManagement] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [GymManagement] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [GymManagement] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [GymManagement] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [GymManagement] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [GymManagement] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [GymManagement] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [GymManagement] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [GymManagement] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [GymManagement] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [GymManagement] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [GymManagement] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [GymManagement] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [GymManagement] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [GymManagement] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [GymManagement] SET RECOVERY FULL 
+GO
+ALTER DATABASE [GymManagement] SET  MULTI_USER 
+GO
+ALTER DATABASE [GymManagement] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [GymManagement] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [GymManagement] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [GymManagement] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+ALTER DATABASE [GymManagement] SET DELAYED_DURABILITY = DISABLED 
+GO
+ALTER DATABASE [GymManagement] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+GO
+EXEC sys.sp_db_vardecimal_storage_format N'GymManagement', N'ON'
+GO
+ALTER DATABASE [GymManagement] SET QUERY_STORE = OFF
+GO
+USE [GymManagement]
+GO
+/****** Object:  User [son]    Script Date: 23/06/2023 5:10:56 PM ******/
+CREATE USER [son] FOR LOGIN [son] WITH DEFAULT_SCHEMA=[son]
+GO
+/****** Object:  User [ninh]    Script Date: 23/06/2023 5:10:56 PM ******/
+CREATE USER [ninh] FOR LOGIN [ninh] WITH DEFAULT_SCHEMA=[ninh]
+GO
+/****** Object:  User [nam]    Script Date: 23/06/2023 5:10:56 PM ******/
+CREATE USER [nam] FOR LOGIN [nam] WITH DEFAULT_SCHEMA=[nam]
+GO
+/****** Object:  User [admin]    Script Date: 23/06/2023 5:10:56 PM ******/
+CREATE USER [admin] FOR LOGIN [admin] WITH DEFAULT_SCHEMA=[admin]
+GO
+/****** Object:  Schema [admin]    Script Date: 23/06/2023 5:10:56 PM ******/
+CREATE SCHEMA [admin]
+GO
+/****** Object:  Schema [nam]    Script Date: 23/06/2023 5:10:56 PM ******/
+CREATE SCHEMA [nam]
+GO
+/****** Object:  Schema [ninh]    Script Date: 23/06/2023 5:10:56 PM ******/
+CREATE SCHEMA [ninh]
+GO
+/****** Object:  Schema [son]    Script Date: 23/06/2023 5:10:56 PM ******/
+CREATE SCHEMA [son]
+GO
+USE [GymManagement]
+GO
+/****** Object:  Sequence [dbo].[seq_invoice]    Script Date: 23/06/2023 5:10:56 PM ******/
+CREATE SEQUENCE [dbo].[seq_invoice] 
+ AS [bigint]
+ START WITH 1
+ INCREMENT BY 1
+ MINVALUE -9223372036854775808
+ MAXVALUE 9223372036854775807
+ CACHE 
+GO
+USE [GymManagement]
+GO
+/****** Object:  Sequence [dbo].[seq_memberCode]    Script Date: 23/06/2023 5:10:56 PM ******/
+CREATE SEQUENCE [dbo].[seq_memberCode] 
+ AS [bigint]
+ START WITH 27
+ INCREMENT BY 1
+ MINVALUE -9223372036854775808
+ MAXVALUE 9223372036854775807
+ CACHE 
+GO
+USE [GymManagement]
+GO
+/****** Object:  Sequence [dbo].[seq_memberPackge]    Script Date: 23/06/2023 5:10:56 PM ******/
+CREATE SEQUENCE [dbo].[seq_memberPackge] 
+ AS [bigint]
+ START WITH 1
+ INCREMENT BY 1
+ MINVALUE -9223372036854775808
+ MAXVALUE 9223372036854775807
+ CACHE 
+GO
+/****** Object:  UserDefinedFunction [dbo].[FN_CheckContainList]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE FUNCTION [dbo].[FN_CheckContainList]
+(
+	@p_parent_array VARCHAR(MAX),
+    @p_child_array VARCHAR(MAX)
+)
+RETURNS INT
+AS
+BEGIN
+	DECLARE @v_count INT = 0;
+	DECLARE v_cur_condition CURSOR FOR 
+		SELECT [str] AS condition FROM FN_ParserStrToRow(@p_child_array,',');
+
+	DECLARE @item NVARCHAR(1000) = '';
+	OPEN v_cur_condition
+	FETCH NEXT FROM v_cur_condition INTO @item
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		IF CHARINDEX(@item, @p_parent_array) > 0 BEGIN
+			SET @v_count = @v_count + 1;
+		END;
+		FETCH NEXT FROM v_cur_condition INTO @item
+	END;
+	IF @v_count > 0 
+        RETURN 1;
+    ELSE
+        RETURN 0;
+	RETURN @v_count;
+END
+GO
+/****** Object:  UserDefinedFunction [dbo].[FN_ParserStrToRow]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE FUNCTION [dbo].[FN_ParserStrToRow]
+(
+    @in_string NVARCHAR(MAX),
+    @delimeter NVARCHAR(1)
+)
+RETURNS @list TABLE(str NVARCHAR(100))
+AS
+BEGIN
+        WHILE LEN(@in_string) > 0
+        BEGIN
+            INSERT INTO @list(str)
+            SELECT left(@in_string, charindex(@delimeter, @in_string+@delimeter) -1) as str
+    
+            SET @in_string = stuff(@in_string, 1, charindex(@delimeter, @in_string + @delimeter), '')
+        end
+    RETURN 
+END
+
+GO
+/****** Object:  UserDefinedFunction [dbo].[FN_TotalAllbyMemberCard]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+create function [dbo].[FN_TotalAllbyMemberCard](@idKH int)
+returns int
+as
+begin
+	Declare @total int
+	Select @total=sum(Total) from Invoice 
+	where Id in (select InvoiceId from DebitDetail where status = '1')
+	and MemberPackgeId in (select Id from MemberPackge where MemberCardId in 
+	(select Id from MemberCard where Id = @idKH)) and Status ='A'
+	return @total
+end
+GO
+/****** Object:  UserDefinedFunction [dbo].[FN_TotalDebitbyMemberCard]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+create function [dbo].[FN_TotalDebitbyMemberCard](@idKH int)
+returns int
+as
+begin
+	declare @totalDebit int
+	SELECT @totalDebit= SUM((a.Total - a.Discount) - Cash) FROM Invoice a
+	JOIN MemberPackge b ON b.Id = a.MemberPackgeId
+	JOIN MemberCard g ON g.Id = b.MemberCardId
+	WHERE g.Deleted = 0 AND a.Status = 'P'
+	return  @totalDebit
+end
+GO
+/****** Object:  UserDefinedFunction [dbo].[FN_TotalPayment]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[FN_TotalPayment](@idMemberCard decimal(18,0))
+returns decimal(18,0)
+as
+begin
+    DECLARE @totalPayment decimal(18,0);
+        --tổng số tiền đã thanh toán
+        SELECT @totalPayment=SUM(a.Total - a.Discount) FROM Invoice a 
+        JOIN MemberPackge b ON a.MemberPackgeId = b.Id
+        WHERE b.MemberCardId = @idMemberCard AND a.Status = 'A';
+
+    return @totalPayment
+end
+GO
+/****** Object:  Table [dbo].[DebitDetail]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[DebitDetail](
+	[Id] [decimal](18, 0) IDENTITY(1,1) NOT NULL,
+	[InvoiceId] [decimal](18, 0) NULL,
+	[Debit] [decimal](18, 0) NULL,
+	[PaymentDeadline] [datetime] NULL,
+	[Status] [nvarchar](1) NULL,
+	[Created_By] [nvarchar](max) NULL,
+	[Created_Date] [datetime] NULL,
+ CONSTRAINT [PK_DebitDetail] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  UserDefinedFunction [dbo].[FN_DebitDetailS]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+create function [dbo].[FN_DebitDetailS]()
+returns table
+as return select * from DebitDetail where Status = 'A'
+GO
+/****** Object:  Table [dbo].[TypeMember]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TypeMember](
+	[Id] [decimal](18, 0) IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+	[Description] [nvarchar](max) NULL,
+	[Discount] [float] NULL,
+	[Deleted] [decimal](18, 0) NULL,
+	[Created_By] [nvarchar](max) NULL,
+	[Created_Date] [date] NULL,
+	[Modified_By] [nvarchar](max) NULL,
+	[Modified_Date] [date] NULL,
+ CONSTRAINT [PK_TypeMenber] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[MemberCard]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[MemberCard](
+	[Id] [decimal](18, 0) IDENTITY(1,1) NOT NULL,
+	[Code] [nvarchar](max) NULL,
+	[TypeMemberId] [decimal](18, 0) NULL,
+	[ImgLink] [nvarchar](max) NULL,
+	[Name] [nvarchar](max) NULL,
+	[Birthday] [date] NULL,
+	[Address] [nvarchar](max) NULL,
+	[Sex] [nvarchar](50) NULL,
+	[Email] [nvarchar](max) NULL,
+	[Phone] [nvarchar](max) NULL,
+	[IdentityCard] [nvarchar](max) NULL,
+	[IdentityAddress] [nvarchar](1000) NULL,
+	[IdentityDate] [date] NULL,
+	[StartDate] [date] NULL,
+	[EndDate] [date] NULL,
+	[Status] [nvarchar](1) NULL,
+	[Deleted] [decimal](18, 0) NULL,
+	[Created_By] [nvarchar](max) NULL,
+	[Created_Date] [date] NULL,
+	[Modified_By] [nvarchar](max) NULL,
+	[Modified_Date] [date] NULL,
+ CONSTRAINT [PK_Member] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[view_TypeMember]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[view_TypeMember]
+AS
+	SELECT a.Id, a.Name, b.Name as NameType, b.Discount from MemberCard a
+	Join TypeMember b on a.TypeMemberId = b.Id 
+	Where b.Name = 'VIP 2'
+GO
+/****** Object:  Table [dbo].[MemberPackge]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[MemberPackge](
+	[Id] [decimal](18, 0) NOT NULL,
+	[MemberCardId] [decimal](18, 0) NULL,
+	[PackgeId] [decimal](18, 0) NULL,
+	[ActiveDay] [datetime] NULL,
+	[UnActiveDay] [datetime] NULL,
+	[Status] [nvarchar](1) NULL,
+ CONSTRAINT [PK_MemberPackge] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Invoice]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Invoice](
+	[Id] [decimal](18, 0) NOT NULL,
+	[Code] [nvarchar](max) NULL,
+	[MemberPackgeId] [decimal](18, 0) NULL,
+	[PackgePeriod] [int] NULL,
+	[Discount] [decimal](18, 0) NULL,
+	[Total] [decimal](18, 0) NULL,
+	[Cash] [decimal](18, 0) NULL,
+	[InvoiceType] [decimal](18, 0) NULL,
+	[PaymentType] [decimal](18, 0) NULL,
+	[Status] [nvarchar](1) NULL,
+	[InvoiceIssuer] [nvarchar](max) NULL,
+	[IssuDate] [datetime] NULL,
+	[Voucher] [nvarchar](200) NULL,
+ CONSTRAINT [PK_Invoice] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[view_thongKeGhiNo]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[view_thongKeGhiNo]
+AS
+	SELECT c.Name, d.Debit FROM DebitDetail d
+	JOIN Invoice a ON d.InvoiceId = a.Id
+	JOIN MemberPackge b ON a.MemberPackgeId = b.Id
+	JOIN MemberCard c ON b.MemberCardId = c.Id
+	WHERE d.Status = 'P'
+GO
+/****** Object:  Table [dbo].[AllCode]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[AllCode](
+	[CDName] [nvarchar](max) NULL,
+	[CDType] [nvarchar](max) NULL,
+	[CDVal] [nvarchar](max) NULL,
+	[Content] [nvarchar](max) NULL,
+	[LstOrd] [int] NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[view_memberCard]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE VIEW [dbo].[view_memberCard]
+AS
+	SELECT a.*, b.Name TypeMemberName, al1.Content StatusText, b.Discount FROM MemberCard a
+	JOIN TypeMember b ON a.TypeMemberId = b.Id
+	LEFT JOIN AllCode al1 ON al1.CDName = 'MEMBERCARD' AND al1.CDType = 'STATUS' AND al1.CDVal = a.Status
+	WHERE a.Deleted = 0;
+GO
+/****** Object:  View [dbo].[view_memberPackge]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[view_memberPackge]
+AS
+	SELECT a.*, b.Name MemberName, al1.Content StatusText FROM MemberPackge a
+	JOIN MemberCard b ON a.MemberCardId = b.Id
+	LEFT JOIN AllCode al1 ON al1.CDName = 'MEMBERPACKGE' AND al1.CDType = 'STATUS' AND al1.CDVal = a.Status
+GO
+/****** Object:  View [dbo].[view_DebitDetail]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE VIEW [dbo].[view_DebitDetail]
+AS 
+	SELECT a.Id, d.Id MemberCardId, d.Name, a.Debit, a.PaymentDeadline, a.Status, al.Content StatusText, b.MemberPackgeId,
+    CASE WHEN (DATEDIFF(day, a.PaymentDeadline, GETDATE())) < 0 THEN 0 ELSE (DATEDIFF(day, a.PaymentDeadline, GETDATE())) END  AS DateLate,
+     (b.Total-b.Discount) * 0.05 * CASE WHEN (DATEDIFF(day, a.PaymentDeadline, GETDATE())) < 0 THEN 0 ELSE (DATEDIFF(day, a.PaymentDeadline, GETDATE())) END AS Fine
+     FROM DebitDetail a
+    JOIN Invoice b ON a.InvoiceId = b.Id
+    JOIN MemberPackge c ON c.Id = b.MemberPackgeId
+    JOIN MemberCard d ON d.Id = c.MemberCardId AND d.Deleted= 0
+    LEFT JOIN AllCode al ON al.CDName = 'DEBITDETAIL' AND al.CDType = 'STATUS' AND al.CDVal = a.Status
+GO
+/****** Object:  Table [dbo].[Packge]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Packge](
+	[Id] [decimal](18, 0) IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NULL,
+	[Description] [nvarchar](max) NULL,
+	[Discount] [float] NULL,
+	[Price] [decimal](18, 0) NULL,
+	[Deleted] [decimal](18, 0) NULL,
+	[Created_By] [nvarchar](max) NULL,
+	[Created_Date] [date] NULL,
+	[Modified_By] [nvarchar](max) NULL,
+	[Modified_Date] [date] NULL,
+ CONSTRAINT [PK_Packge] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[VoucherPackge]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[VoucherPackge](
+	[Id] [decimal](18, 0) NOT NULL,
+	[Code] [nvarchar](max) NULL,
+	[Count] [decimal](18, 0) NULL,
+	[Description] [nvarchar](50) NULL,
+	[OpenTime] [datetime] NULL,
+	[CloseTime] [datetime] NULL,
+	[Status] [nvarchar](1) NULL,
+	[VoucherType] [decimal](1, 0) NULL,
+	[Discount] [decimal](18, 0) NULL,
+	[MinTotalBill] [decimal](18, 0) NULL,
+	[ForMemberType] [decimal](18, 0) NULL,
+	[Deleted] [decimal](18, 0) NULL,
+	[Created_By] [nvarchar](max) NULL,
+	[Created_Date] [date] NULL,
+	[Modified_By] [nvarchar](max) NULL,
+	[Modified_Date] [date] NULL,
+ CONSTRAINT [PK_VoucherPackge] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Staff]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Staff](
+	[Id] [decimal](18, 0) IDENTITY(1,1) NOT NULL,
+	[UserName] [nvarchar](200) NULL,
+	[Password] [nvarchar](500) NULL,
+	[Name] [nvarchar](50) NOT NULL,
+	[IdentityCard] [nvarchar](max) NOT NULL,
+	[Phone] [nvarchar](max) NOT NULL,
+	[Sex] [nvarchar](max) NOT NULL,
+	[Birthday] [date] NOT NULL,
+	[Address] [nvarchar](max) NOT NULL,
+	[Deleted] [decimal](18, 0) NULL,
+	[Created_By] [nvarchar](max) NULL,
+	[Created_Date] [date] NULL,
+	[Modified_By] [nvarchar](max) NULL,
+	[Modified_Date] [date] NULL,
+ CONSTRAINT [PK_Staff] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[view_Invoice]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE VIEW [dbo].[view_Invoice]
+	AS 
+		SELECT a.*, c.Name PackgeName, d.Description VoucherDesc, e.Name StaffName, g.Name MemberName,
+		(a.Total - a.Discount) TotalBeforDiscount, (a.Total - a.Discount) - Cash Debit,
+		al_1.Content StatusText, al_2.Content InvoiceTypeText , al_3.Content PaymentTypeText 
+		FROM Invoice a
+		JOIN MemberPackge b ON b.Id = a.MemberPackgeId
+		JOIN Packge c ON c.Id = b.PackgeId
+		JOIN MemberCard g ON g.Id = b.MemberCardId AND g.Deleted = 0
+
+		JOIN VoucherPackge d ON d.Code = a.Voucher
+
+		JOIN Staff e ON e.UserName = a.InvoiceIssuer AND e.Deleted = 0
+
+		LEFT JOIN AllCode al_1 ON al_1.CDName = 'INVOICE' AND al_1.CDType = 'STATUS' AND al_1.CDVal = a.Status
+		LEFT JOIN AllCode al_2 ON al_2.CDName = 'INVOICE' AND al_2.CDType = 'INVOICETYPE' AND al_2.CDVal = a.InvoiceType
+		LEFT JOIN AllCode al_3 ON al_3.CDName = 'INVOICE' AND al_3.CDType = 'PAYMENTTYPE' AND al_3.CDVal = a.PaymentType
+
+GO
+/****** Object:  Table [dbo].[InvoiceDebit]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[InvoiceDebit](
+	[Id] [decimal](18, 0) IDENTITY(1,1) NOT NULL,
+	[DebitDetailId] [decimal](18, 0) NOT NULL,
+	[Fine] [decimal](18, 0) NOT NULL,
+	[InvoiceIssuer] [nvarchar](50) NOT NULL,
+	[PaymentDay] [datetime] NOT NULL,
+ CONSTRAINT [PK_InvoiceDebit] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'DEBITDETAIL', N'STATUS', N'P', N'Chưa thanh toán', 1)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'DEBITDETAIL', N'STATUS', N'A', N'Đã thanh toán ', 0)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'INVOICE', N'STATUS', N'A', N'Hoàn thành', 1)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'INVOICE', N'STATUS', N'P', N'Chưa hoàn thành', 0)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'INVOICE', N'PAYMENTTYPE', N'0', N'Tiền mặt', 1)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'INVOICE', N'PAYMENTTYPE', N'1', N'Chuyển khoản', 2)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'INVOICE', N'INVOICETYPE', N'0', N'Không ghi nợ', 1)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'INVOICE', N'INVOICETYPE', N'1', N'Ghi nợ', 2)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'MEMBERCARD', N'STATUS', N'A', N'Hoạt động', 1)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'MEMBERCARD', N'STATUS', N'C', N'Ngừng hoạt động', 2)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'VOUCHER', N'STATUS', N'A', N'Đang hoạt động', 1)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'VOUCHER', N'STATUS', N'P', N'Chờ đến hạn', 2)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'VOUCHER', N'STATUS', N'E', N'Đã đóng', 3)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'VOUCHER', N'VOUCHERTYPE', N'0', N'Giảm giá theo tiền', 1)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'VOUCHER', N'VOUCHERTYPE', N'1', N'Giảm giá theo %', 0)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'MEMBERPACKGE', N'STATUS', N'A', N'Hoạt động', 1)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'MEMBERPACKGE', N'STATUS', N'U', N'Dừng hoạt động', 2)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'MEMBERPACKGE', N'STATUS', N'P', N'Hoạt động(ghi nợ)', 3)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'MEMBERPACKGE', N'STATUS', N'E', N'Đang hết hạn', 4)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'MEMBERPACKGE', N'STATUS', N'L', N'Khóa', 5)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'DISPLAY', N'RECORD_ON_PAGE', N'10', N'10', 0)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'DISPLAY', N'RECORD_ON_PAGE', N'50', N'50', 1)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'DISPLAY', N'RECORD_ON_PAGE', N'500', N'500', 2)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'DISPLAY', N'RECORD_ON_PAGE', N'1000', N'1000', 3)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'MEMBERCARD', N'SEX', N'1', N'Nam', 0)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'MEMBERCARD', N'SEX', N'2', N'Nữ', 1)
+GO
+INSERT [dbo].[AllCode] ([CDName], [CDType], [CDVal], [Content], [LstOrd]) VALUES (N'MEMBERCARD', N'SEX', N'3', N'Khác', 2)
+GO
+SET IDENTITY_INSERT [dbo].[DebitDetail] ON 
+GO
+INSERT [dbo].[DebitDetail] ([Id], [InvoiceId], [Debit], [PaymentDeadline], [Status], [Created_By], [Created_Date]) VALUES (CAST(5 AS Decimal(18, 0)), CAST(59 AS Decimal(18, 0)), CAST(70000 AS Decimal(18, 0)), CAST(N'2023-01-20T19:51:01.440' AS DateTime), N'A', N'admin', CAST(N'2023-01-05T19:51:01.440' AS DateTime))
+GO
+INSERT [dbo].[DebitDetail] ([Id], [InvoiceId], [Debit], [PaymentDeadline], [Status], [Created_By], [Created_Date]) VALUES (CAST(6 AS Decimal(18, 0)), CAST(62 AS Decimal(18, 0)), CAST(60000 AS Decimal(18, 0)), CAST(N'2023-01-21T21:37:38.593' AS DateTime), N'P', N'admin', CAST(N'2023-01-06T21:37:38.593' AS DateTime))
+GO
+INSERT [dbo].[DebitDetail] ([Id], [InvoiceId], [Debit], [PaymentDeadline], [Status], [Created_By], [Created_Date]) VALUES (CAST(7 AS Decimal(18, 0)), CAST(67 AS Decimal(18, 0)), CAST(36400 AS Decimal(18, 0)), CAST(N'2023-01-25T12:49:12.467' AS DateTime), N'P', N'staff1', CAST(N'2023-01-10T12:49:12.467' AS DateTime))
+GO
+SET IDENTITY_INSERT [dbo].[DebitDetail] OFF
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(53 AS Decimal(18, 0)), NULL, CAST(29 AS Decimal(18, 0)), 5, CAST(569943 AS Decimal(18, 0)), CAST(1899810 AS Decimal(18, 0)), CAST(1329867 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'A', N'admin', CAST(N'2023-01-05T19:45:05.777' AS DateTime), N'VIP1')
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(57 AS Decimal(18, 0)), NULL, CAST(33 AS Decimal(18, 0)), 1, CAST(60080 AS Decimal(18, 0)), CAST(300400 AS Decimal(18, 0)), CAST(240320 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'A', N'admin', CAST(N'2023-01-05T19:49:07.467' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(58 AS Decimal(18, 0)), N'HD58', CAST(33 AS Decimal(18, 0)), 1, CAST(60080 AS Decimal(18, 0)), CAST(300400 AS Decimal(18, 0)), CAST(240320 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'A', N'admin', CAST(N'2023-01-05T19:49:50.210' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(59 AS Decimal(18, 0)), NULL, CAST(35 AS Decimal(18, 0)), 12, CAST(60000 AS Decimal(18, 0)), CAST(3600000 AS Decimal(18, 0)), CAST(3530000 AS Decimal(18, 0)), CAST(1 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'A', N'admin', CAST(N'2023-01-05T19:51:01.440' AS DateTime), N'GYM999')
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(60 AS Decimal(18, 0)), N'HD60', CAST(36 AS Decimal(18, 0)), 5, CAST(379962 AS Decimal(18, 0)), CAST(1899810 AS Decimal(18, 0)), CAST(1519848 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'A', N'admin', CAST(N'2023-01-06T21:34:41.073' AS DateTime), N'VIP3')
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(61 AS Decimal(18, 0)), N'HD61', CAST(36 AS Decimal(18, 0)), 1, CAST(0 AS Decimal(18, 0)), CAST(376200 AS Decimal(18, 0)), CAST(376200 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'A', N'admin', CAST(N'2023-01-06T21:35:51.453' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(62 AS Decimal(18, 0)), NULL, CAST(38 AS Decimal(18, 0)), 1, CAST(30000 AS Decimal(18, 0)), CAST(300000 AS Decimal(18, 0)), CAST(240000 AS Decimal(18, 0)), CAST(1 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'P', N'admin', CAST(N'2023-01-06T21:37:38.593' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(63 AS Decimal(18, 0)), NULL, CAST(39 AS Decimal(18, 0)), 1, CAST(45000 AS Decimal(18, 0)), CAST(300000 AS Decimal(18, 0)), CAST(255000 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'A', N'admin', CAST(N'2023-01-09T21:26:28.827' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(64 AS Decimal(18, 0)), NULL, CAST(40 AS Decimal(18, 0)), 1, CAST(0 AS Decimal(18, 0)), CAST(300000 AS Decimal(18, 0)), CAST(300000 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'A', N'admin', CAST(N'2023-01-10T12:35:15.173' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(65 AS Decimal(18, 0)), NULL, CAST(39 AS Decimal(18, 0)), 1, CAST(0 AS Decimal(18, 0)), CAST(300000 AS Decimal(18, 0)), CAST(300000 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'A', N'staff1', CAST(N'2023-01-10T12:47:59.987' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(66 AS Decimal(18, 0)), NULL, CAST(42 AS Decimal(18, 0)), 1, CAST(0 AS Decimal(18, 0)), CAST(300400 AS Decimal(18, 0)), CAST(300400 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'A', N'staff1', CAST(N'2023-01-10T12:48:28.800' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(67 AS Decimal(18, 0)), NULL, CAST(42 AS Decimal(18, 0)), 1, CAST(0 AS Decimal(18, 0)), CAST(300400 AS Decimal(18, 0)), CAST(264000 AS Decimal(18, 0)), CAST(1 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'P', N'staff1', CAST(N'2023-01-10T12:49:12.467' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(68 AS Decimal(18, 0)), NULL, CAST(44 AS Decimal(18, 0)), 1, CAST(0 AS Decimal(18, 0)), CAST(300000 AS Decimal(18, 0)), NULL, NULL, CAST(0 AS Decimal(18, 0)), N'A', N'staff1', CAST(N'2023-05-25T08:40:10.733' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(69 AS Decimal(18, 0)), NULL, CAST(45 AS Decimal(18, 0)), 1, CAST(0 AS Decimal(18, 0)), CAST(379962 AS Decimal(18, 0)), NULL, NULL, CAST(0 AS Decimal(18, 0)), N'A', N'staff1', CAST(N'2023-05-25T09:05:14.693' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(72 AS Decimal(18, 0)), NULL, CAST(48 AS Decimal(18, 0)), 6, CAST(269919 AS Decimal(18, 0)), CAST(2699190 AS Decimal(18, 0)), NULL, NULL, CAST(0 AS Decimal(18, 0)), N'A', N'staff1', CAST(N'2023-06-12T15:37:17.480' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(121 AS Decimal(18, 0)), NULL, CAST(97 AS Decimal(18, 0)), 3, CAST(0 AS Decimal(18, 0)), CAST(1349595 AS Decimal(18, 0)), NULL, NULL, CAST(0 AS Decimal(18, 0)), N'A', N'staff1', CAST(N'2023-06-15T21:56:11.310' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(124 AS Decimal(18, 0)), N'HD124', CAST(100 AS Decimal(18, 0)), 3, CAST(0 AS Decimal(18, 0)), CAST(901200 AS Decimal(18, 0)), NULL, NULL, CAST(0 AS Decimal(18, 0)), N'A', N'staff1', CAST(N'2023-06-15T22:03:08.947' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(125 AS Decimal(18, 0)), N'HD125', CAST(101 AS Decimal(18, 0)), 1, CAST(0 AS Decimal(18, 0)), CAST(300400 AS Decimal(18, 0)), NULL, NULL, CAST(0 AS Decimal(18, 0)), N'A', N'staff1', CAST(N'2023-06-15T22:04:27.293' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(127 AS Decimal(18, 0)), N'HD127', CAST(103 AS Decimal(18, 0)), 1, CAST(37996 AS Decimal(18, 0)), CAST(379962 AS Decimal(18, 0)), NULL, NULL, CAST(0 AS Decimal(18, 0)), N'A', N'staff1', CAST(N'2023-06-15T22:05:30.787' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(128 AS Decimal(18, 0)), N'HD128', CAST(104 AS Decimal(18, 0)), 1, CAST(44986 AS Decimal(18, 0)), CAST(449865 AS Decimal(18, 0)), NULL, NULL, CAST(0 AS Decimal(18, 0)), N'A', N'staff1', CAST(N'2023-06-15T22:06:09.087' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(129 AS Decimal(18, 0)), N'HD129', CAST(105 AS Decimal(18, 0)), 3, CAST(0 AS Decimal(18, 0)), CAST(1139886 AS Decimal(18, 0)), NULL, NULL, CAST(0 AS Decimal(18, 0)), N'A', N'staff1', CAST(N'2023-06-16T13:51:42.543' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(130 AS Decimal(18, 0)), N'HD130', CAST(106 AS Decimal(18, 0)), 1, CAST(44986 AS Decimal(18, 0)), CAST(449865 AS Decimal(18, 0)), NULL, NULL, CAST(0 AS Decimal(18, 0)), N'A', N'staff1', CAST(N'2023-06-16T13:53:04.490' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(135 AS Decimal(18, 0)), N'HD135', CAST(39 AS Decimal(18, 0)), 3, CAST(90000 AS Decimal(18, 0)), CAST(900000 AS Decimal(18, 0)), NULL, NULL, CAST(0 AS Decimal(18, 0)), N'A', N'staff1', CAST(N'2023-06-16T16:55:00.667' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(136 AS Decimal(18, 0)), N'HD136', CAST(39 AS Decimal(18, 0)), 1, CAST(30000 AS Decimal(18, 0)), CAST(300000 AS Decimal(18, 0)), NULL, NULL, CAST(0 AS Decimal(18, 0)), N'A', N'staff1', CAST(N'2023-06-16T16:59:36.987' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(137 AS Decimal(18, 0)), N'HD137', CAST(39 AS Decimal(18, 0)), 3, CAST(90000 AS Decimal(18, 0)), CAST(900000 AS Decimal(18, 0)), NULL, NULL, CAST(0 AS Decimal(18, 0)), N'A', N'staff1', CAST(N'2023-06-16T17:05:14.420' AS DateTime), NULL)
+GO
+INSERT [dbo].[Invoice] ([Id], [Code], [MemberPackgeId], [PackgePeriod], [Discount], [Total], [Cash], [InvoiceType], [PaymentType], [Status], [InvoiceIssuer], [IssuDate], [Voucher]) VALUES (CAST(138 AS Decimal(18, 0)), N'HD138', CAST(39 AS Decimal(18, 0)), 1, CAST(30000 AS Decimal(18, 0)), CAST(300000 AS Decimal(18, 0)), NULL, NULL, CAST(0 AS Decimal(18, 0)), N'A', N'staff1', CAST(N'2023-06-16T17:08:42.843' AS DateTime), NULL)
+GO
+SET IDENTITY_INSERT [dbo].[InvoiceDebit] ON 
+GO
+INSERT [dbo].[InvoiceDebit] ([Id], [DebitDetailId], [Fine], [InvoiceIssuer], [PaymentDay]) VALUES (CAST(7 AS Decimal(18, 0)), CAST(5 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'admin', CAST(N'2023-01-05T00:00:00.000' AS DateTime))
+GO
+INSERT [dbo].[InvoiceDebit] ([Id], [DebitDetailId], [Fine], [InvoiceIssuer], [PaymentDay]) VALUES (CAST(8 AS Decimal(18, 0)), CAST(5 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'admin', CAST(N'2023-01-06T00:00:00.000' AS DateTime))
+GO
+SET IDENTITY_INSERT [dbo].[InvoiceDebit] OFF
+GO
+SET IDENTITY_INSERT [dbo].[MemberCard] ON 
+GO
+INSERT [dbo].[MemberCard] ([Id], [Code], [TypeMemberId], [ImgLink], [Name], [Birthday], [Address], [Sex], [Email], [Phone], [IdentityCard], [IdentityAddress], [IdentityDate], [StartDate], [EndDate], [Status], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(17 AS Decimal(18, 0)), NULL, CAST(1 AS Decimal(18, 0)), N'https://localhost:44392/images/BD84FE1C-115C-4237-BEB5-7356602E0269.jpg', N'Đặng Tiến Sơn', CAST(N'2002-08-14' AS Date), N'Ứng Hòa,Hà Nội', N'Nam', NULL, N'0358946546', N'122185423', NULL, NULL, CAST(N'2022-01-01' AS Date), CAST(N'2022-01-01' AS Date), N'A', CAST(0 AS Decimal(18, 0)), N'admin', NULL, NULL, NULL)
+GO
+INSERT [dbo].[MemberCard] ([Id], [Code], [TypeMemberId], [ImgLink], [Name], [Birthday], [Address], [Sex], [Email], [Phone], [IdentityCard], [IdentityAddress], [IdentityDate], [StartDate], [EndDate], [Status], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(18 AS Decimal(18, 0)), NULL, CAST(2 AS Decimal(18, 0)), N'https://localhost:44392/images/BD84FE1C-115C-4237-BEB5-7356602E0269.jpg', N'Nguyến Trọng Ninh', CAST(N'2002-10-18' AS Date), N'Thanh Trì, Hà Nội', N'Nam', NULL, N'0345468546', N'125646212', NULL, NULL, CAST(N'2022-01-01' AS Date), CAST(N'2022-01-01' AS Date), N'A', CAST(0 AS Decimal(18, 0)), N'admin', NULL, NULL, NULL)
+GO
+INSERT [dbo].[MemberCard] ([Id], [Code], [TypeMemberId], [ImgLink], [Name], [Birthday], [Address], [Sex], [Email], [Phone], [IdentityCard], [IdentityAddress], [IdentityDate], [StartDate], [EndDate], [Status], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(19 AS Decimal(18, 0)), NULL, CAST(2 AS Decimal(18, 0)), N'https://localhost:44392/images/gfg.jpg', N'Nguyễn Đăng Nam', CAST(N'2002-09-12' AS Date), N'Hà Đông,Hà Nội', N'Nam', NULL, N'0799012902', N'651226456', NULL, NULL, CAST(N'2022-01-01' AS Date), CAST(N'2022-01-01' AS Date), N'A', CAST(0 AS Decimal(18, 0)), N'admin', NULL, NULL, NULL)
+GO
+INSERT [dbo].[MemberCard] ([Id], [Code], [TypeMemberId], [ImgLink], [Name], [Birthday], [Address], [Sex], [Email], [Phone], [IdentityCard], [IdentityAddress], [IdentityDate], [StartDate], [EndDate], [Status], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(20 AS Decimal(18, 0)), NULL, CAST(2 AS Decimal(18, 0)), N'https://localhost:44392/images/37835787_101598570776029_6458727920864067584_n.jpg', N'Nguyễn Gia Linh', CAST(N'2002-12-09' AS Date), N'Thái Hà,Hà Nội', N'Nam', NULL, N'0821654892', N'165489421', NULL, NULL, CAST(N'2022-01-01' AS Date), CAST(N'2022-01-01' AS Date), N'A', CAST(0 AS Decimal(18, 0)), N'admin', NULL, NULL, NULL)
+GO
+INSERT [dbo].[MemberCard] ([Id], [Code], [TypeMemberId], [ImgLink], [Name], [Birthday], [Address], [Sex], [Email], [Phone], [IdentityCard], [IdentityAddress], [IdentityDate], [StartDate], [EndDate], [Status], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(21 AS Decimal(18, 0)), NULL, CAST(2 AS Decimal(18, 0)), N'https://localhost:44392/images/172241639_1367225793675903_8319479518845297271_n.jpg', N'Tạ Minh Quang', CAST(N'2002-11-06' AS Date), N'Thạch Thất,Hà Nội', N'Nam', NULL, N'0921357545', N'524165741', NULL, NULL, CAST(N'2022-01-01' AS Date), CAST(N'2022-01-01' AS Date), N'A', CAST(0 AS Decimal(18, 0)), N'admin', NULL, NULL, NULL)
+GO
+INSERT [dbo].[MemberCard] ([Id], [Code], [TypeMemberId], [ImgLink], [Name], [Birthday], [Address], [Sex], [Email], [Phone], [IdentityCard], [IdentityAddress], [IdentityDate], [StartDate], [EndDate], [Status], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(22 AS Decimal(18, 0)), NULL, CAST(1 AS Decimal(18, 0)), N'https://localhost:44392/images/d40e07b9c3e106922860500dca917cad.jpg', N'Lê Văn Quyết', CAST(N'2002-06-19' AS Date), N'Thanh Hà,Hải Dương', N'Nam', NULL, N'0364589754', N'216878412', NULL, NULL, CAST(N'2022-01-01' AS Date), CAST(N'2022-01-01' AS Date), N'L', CAST(0 AS Decimal(18, 0)), NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[MemberCard] ([Id], [Code], [TypeMemberId], [ImgLink], [Name], [Birthday], [Address], [Sex], [Email], [Phone], [IdentityCard], [IdentityAddress], [IdentityDate], [StartDate], [EndDate], [Status], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(23 AS Decimal(18, 0)), NULL, CAST(1 AS Decimal(18, 0)), N'https://localhost:44392/images/d40e07b9c3e106922860500dca917cad.jpg', N'Bùi Thu Quỳnh', CAST(N'2002-07-14' AS Date), N'Quận 3, Sài Gòn', N'Nữ', NULL, N'0770120902', N'568752131', NULL, NULL, CAST(N'2022-01-01' AS Date), CAST(N'2022-01-01' AS Date), N'C', CAST(0 AS Decimal(18, 0)), N'admin', NULL, NULL, NULL)
+GO
+INSERT [dbo].[MemberCard] ([Id], [Code], [TypeMemberId], [ImgLink], [Name], [Birthday], [Address], [Sex], [Email], [Phone], [IdentityCard], [IdentityAddress], [IdentityDate], [StartDate], [EndDate], [Status], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(25 AS Decimal(18, 0)), NULL, CAST(1 AS Decimal(18, 0)), N'https://localhost:44392/images/20230621215913571138539872_438948397142393_3924642486912397_n.jpg', N'Son', CAST(N'2023-06-17' AS Date), N'địa chỉ', N'1', N'Son', N'7654', N'12345', N'nơi cấp', CAST(N'2023-10-06' AS Date), NULL, NULL, N'A', CAST(1 AS Decimal(18, 0)), NULL, CAST(N'0001-01-01' AS Date), N'sondt24', CAST(N'2023-06-21' AS Date))
+GO
+INSERT [dbo].[MemberCard] ([Id], [Code], [TypeMemberId], [ImgLink], [Name], [Birthday], [Address], [Sex], [Email], [Phone], [IdentityCard], [IdentityAddress], [IdentityDate], [StartDate], [EndDate], [Status], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(26 AS Decimal(18, 0)), NULL, CAST(1 AS Decimal(18, 0)), N'https://localhost:44392/images/20230621220515914399817829.jpg', N'Trí d?', CAST(N'2023-06-17' AS Date), N'ávas', N'1', N'Trí d?', N'125125125', N'125125', N'ádfasd', CAST(N'2023-06-08' AS Date), NULL, NULL, N'A', CAST(1 AS Decimal(18, 0)), N'sondt24', CAST(N'2023-06-21' AS Date), N'sondt24', CAST(N'2023-06-21' AS Date))
+GO
+INSERT [dbo].[MemberCard] ([Id], [Code], [TypeMemberId], [ImgLink], [Name], [Birthday], [Address], [Sex], [Email], [Phone], [IdentityCard], [IdentityAddress], [IdentityDate], [StartDate], [EndDate], [Status], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(27 AS Decimal(18, 0)), N'KH143', CAST(1 AS Decimal(18, 0)), N'https://localhost:44392/images/20230622172713431248671681_589433452482684_2628274530654851558_n.png', N'Ðâng', CAST(N'2023-06-01' AS Date), N'ádgasdg', N'3', NULL, N'82547234', N'12451236', N'hà nội', CAST(N'2023-09-06' AS Date), NULL, NULL, N'A', CAST(0 AS Decimal(18, 0)), N'sondt24', CAST(N'2023-06-22' AS Date), NULL, NULL)
+GO
+INSERT [dbo].[MemberCard] ([Id], [Code], [TypeMemberId], [ImgLink], [Name], [Birthday], [Address], [Sex], [Email], [Phone], [IdentityCard], [IdentityAddress], [IdentityDate], [StartDate], [EndDate], [Status], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(28 AS Decimal(18, 0)), N'KH27', CAST(1 AS Decimal(18, 0)), N'https://localhost:44392/images/202306221735553752c845a66b8ad2a8aafd288bdc16cd459.jpg', N'trí', CAST(N'2023-06-08' AS Date), N'kjh', N'2', N'trí', N'6123612361', N'123616', N'fvasd', CAST(N'2023-06-01' AS Date), NULL, NULL, N'A', CAST(0 AS Decimal(18, 0)), N'sondt24', CAST(N'2023-06-22' AS Date), N'sondt24', CAST(N'2023-06-23' AS Date))
+GO
+SET IDENTITY_INSERT [dbo].[MemberCard] OFF
+GO
+INSERT [dbo].[MemberPackge] ([Id], [MemberCardId], [PackgeId], [ActiveDay], [UnActiveDay], [Status]) VALUES (CAST(29 AS Decimal(18, 0)), CAST(23 AS Decimal(18, 0)), CAST(3 AS Decimal(18, 0)), CAST(N'2023-01-05T00:00:00.000' AS DateTime), CAST(N'2023-06-05T00:00:00.000' AS DateTime), N'A')
+GO
+INSERT [dbo].[MemberPackge] ([Id], [MemberCardId], [PackgeId], [ActiveDay], [UnActiveDay], [Status]) VALUES (CAST(33 AS Decimal(18, 0)), CAST(23 AS Decimal(18, 0)), CAST(2 AS Decimal(18, 0)), CAST(N'2023-01-05T00:00:00.000' AS DateTime), CAST(N'2023-03-05T00:00:00.000' AS DateTime), N'A')
+GO
+INSERT [dbo].[MemberPackge] ([Id], [MemberCardId], [PackgeId], [ActiveDay], [UnActiveDay], [Status]) VALUES (CAST(35 AS Decimal(18, 0)), CAST(20 AS Decimal(18, 0)), CAST(1 AS Decimal(18, 0)), CAST(N'2023-01-05T00:00:00.000' AS DateTime), CAST(N'2024-01-05T00:00:00.000' AS DateTime), N'A')
+GO
+INSERT [dbo].[MemberPackge] ([Id], [MemberCardId], [PackgeId], [ActiveDay], [UnActiveDay], [Status]) VALUES (CAST(36 AS Decimal(18, 0)), CAST(19 AS Decimal(18, 0)), CAST(3 AS Decimal(18, 0)), CAST(N'2023-01-06T00:00:00.000' AS DateTime), CAST(N'2023-07-06T00:00:00.000' AS DateTime), N'A')
+GO
+INSERT [dbo].[MemberPackge] ([Id], [MemberCardId], [PackgeId], [ActiveDay], [UnActiveDay], [Status]) VALUES (CAST(38 AS Decimal(18, 0)), CAST(22 AS Decimal(18, 0)), CAST(1 AS Decimal(18, 0)), CAST(N'2023-01-06T00:00:00.000' AS DateTime), CAST(N'2023-02-06T00:00:00.000' AS DateTime), N'A')
+GO
+INSERT [dbo].[MemberPackge] ([Id], [MemberCardId], [PackgeId], [ActiveDay], [UnActiveDay], [Status]) VALUES (CAST(39 AS Decimal(18, 0)), CAST(21 AS Decimal(18, 0)), CAST(1 AS Decimal(18, 0)), CAST(N'2023-01-09T00:00:00.000' AS DateTime), CAST(N'2023-11-09T00:00:00.000' AS DateTime), N'A')
+GO
+INSERT [dbo].[MemberPackge] ([Id], [MemberCardId], [PackgeId], [ActiveDay], [UnActiveDay], [Status]) VALUES (CAST(40 AS Decimal(18, 0)), CAST(19 AS Decimal(18, 0)), CAST(1 AS Decimal(18, 0)), CAST(N'2023-01-10T00:00:00.000' AS DateTime), CAST(N'2023-02-10T00:00:00.000' AS DateTime), N'A')
+GO
+INSERT [dbo].[MemberPackge] ([Id], [MemberCardId], [PackgeId], [ActiveDay], [UnActiveDay], [Status]) VALUES (CAST(42 AS Decimal(18, 0)), CAST(21 AS Decimal(18, 0)), CAST(2 AS Decimal(18, 0)), CAST(N'2023-01-10T00:00:00.000' AS DateTime), CAST(N'2023-03-10T00:00:00.000' AS DateTime), N'P')
+GO
+INSERT [dbo].[MemberPackge] ([Id], [MemberCardId], [PackgeId], [ActiveDay], [UnActiveDay], [Status]) VALUES (CAST(44 AS Decimal(18, 0)), CAST(18 AS Decimal(18, 0)), CAST(1 AS Decimal(18, 0)), CAST(N'2023-05-25T00:00:00.000' AS DateTime), CAST(N'2023-06-25T00:00:00.000' AS DateTime), N'A')
+GO
+INSERT [dbo].[MemberPackge] ([Id], [MemberCardId], [PackgeId], [ActiveDay], [UnActiveDay], [Status]) VALUES (CAST(45 AS Decimal(18, 0)), CAST(21 AS Decimal(18, 0)), CAST(3 AS Decimal(18, 0)), CAST(N'2023-05-25T00:00:00.000' AS DateTime), CAST(N'2023-06-25T00:00:00.000' AS DateTime), N'A')
+GO
+INSERT [dbo].[MemberPackge] ([Id], [MemberCardId], [PackgeId], [ActiveDay], [UnActiveDay], [Status]) VALUES (CAST(48 AS Decimal(18, 0)), CAST(19 AS Decimal(18, 0)), CAST(4 AS Decimal(18, 0)), CAST(N'2023-06-12T00:00:00.000' AS DateTime), CAST(N'2023-12-12T00:00:00.000' AS DateTime), N'A')
+GO
+INSERT [dbo].[MemberPackge] ([Id], [MemberCardId], [PackgeId], [ActiveDay], [UnActiveDay], [Status]) VALUES (CAST(97 AS Decimal(18, 0)), CAST(21 AS Decimal(18, 0)), CAST(4 AS Decimal(18, 0)), CAST(N'2023-06-15T00:00:00.000' AS DateTime), CAST(N'2023-09-15T00:00:00.000' AS DateTime), N'A')
+GO
+INSERT [dbo].[MemberPackge] ([Id], [MemberCardId], [PackgeId], [ActiveDay], [UnActiveDay], [Status]) VALUES (CAST(100 AS Decimal(18, 0)), CAST(18 AS Decimal(18, 0)), CAST(2 AS Decimal(18, 0)), CAST(N'2023-06-15T00:00:00.000' AS DateTime), CAST(N'2023-09-15T00:00:00.000' AS DateTime), N'A')
+GO
+INSERT [dbo].[MemberPackge] ([Id], [MemberCardId], [PackgeId], [ActiveDay], [UnActiveDay], [Status]) VALUES (CAST(101 AS Decimal(18, 0)), CAST(20 AS Decimal(18, 0)), CAST(2 AS Decimal(18, 0)), CAST(N'2023-06-15T00:00:00.000' AS DateTime), CAST(N'2023-07-15T00:00:00.000' AS DateTime), N'A')
+GO
+INSERT [dbo].[MemberPackge] ([Id], [MemberCardId], [PackgeId], [ActiveDay], [UnActiveDay], [Status]) VALUES (CAST(103 AS Decimal(18, 0)), CAST(20 AS Decimal(18, 0)), CAST(3 AS Decimal(18, 0)), CAST(N'2023-06-15T00:00:00.000' AS DateTime), CAST(N'2023-07-15T00:00:00.000' AS DateTime), N'A')
+GO
+INSERT [dbo].[MemberPackge] ([Id], [MemberCardId], [PackgeId], [ActiveDay], [UnActiveDay], [Status]) VALUES (CAST(104 AS Decimal(18, 0)), CAST(20 AS Decimal(18, 0)), CAST(4 AS Decimal(18, 0)), CAST(N'2023-06-15T00:00:00.000' AS DateTime), CAST(N'2023-07-15T00:00:00.000' AS DateTime), N'A')
+GO
+INSERT [dbo].[MemberPackge] ([Id], [MemberCardId], [PackgeId], [ActiveDay], [UnActiveDay], [Status]) VALUES (CAST(105 AS Decimal(18, 0)), CAST(18 AS Decimal(18, 0)), CAST(3 AS Decimal(18, 0)), CAST(N'2023-06-16T00:00:00.000' AS DateTime), CAST(N'2023-09-16T00:00:00.000' AS DateTime), N'A')
+GO
+INSERT [dbo].[MemberPackge] ([Id], [MemberCardId], [PackgeId], [ActiveDay], [UnActiveDay], [Status]) VALUES (CAST(106 AS Decimal(18, 0)), CAST(18 AS Decimal(18, 0)), CAST(4 AS Decimal(18, 0)), CAST(N'2023-06-16T00:00:00.000' AS DateTime), CAST(N'2023-07-16T00:00:00.000' AS DateTime), N'A')
+GO
+SET IDENTITY_INSERT [dbo].[Packge] ON 
+GO
+INSERT [dbo].[Packge] ([Id], [Name], [Description], [Discount], [Price], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(1 AS Decimal(18, 0)), N'Gói tập thường', N'Gói tập theo 1 tháng', 0, CAST(300000 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'Admin', CAST(N'2022-01-01' AS Date), N'Admin', CAST(N'2022-01-01' AS Date))
+GO
+INSERT [dbo].[Packge] ([Id], [Name], [Description], [Discount], [Price], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(2 AS Decimal(18, 0)), N'Goga', N'', 0, CAST(300400 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'admin', CAST(N'2022-01-01' AS Date), NULL, NULL)
+GO
+INSERT [dbo].[Packge] ([Id], [Name], [Description], [Discount], [Price], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(3 AS Decimal(18, 0)), N'Tập cùng pt riêng', N'PT riêng', 0.01, CAST(380000 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'admin', CAST(N'2023-04-01' AS Date), NULL, NULL)
+GO
+INSERT [dbo].[Packge] ([Id], [Name], [Description], [Discount], [Price], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(4 AS Decimal(18, 0)), N'Lấy lạ vóc dáng', N'Lấy lại vóc dáng cho chị em thừa cân', 0.03, CAST(450000 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'admin', CAST(N'2023-05-23' AS Date), NULL, NULL)
+GO
+SET IDENTITY_INSERT [dbo].[Packge] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Staff] ON 
+GO
+INSERT [dbo].[Staff] ([Id], [UserName], [Password], [Name], [IdentityCard], [Phone], [Sex], [Birthday], [Address], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(1 AS Decimal(18, 0)), N'staff1', N'123456aA@', N'Nhân viên 1', N'0246512155', N'0346485465', N'Nam', CAST(N'1999-09-12' AS Date), N'Thái Bình', CAST(0 AS Decimal(18, 0)), N'Admin', CAST(N'2022-01-01' AS Date), N'Amin', CAST(N'2022-01-01' AS Date))
+GO
+INSERT [dbo].[Staff] ([Id], [UserName], [Password], [Name], [IdentityCard], [Phone], [Sex], [Birthday], [Address], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(3 AS Decimal(18, 0)), N'staff2', N'123456aA@', N'Nhân viên 2', N'2115642125', N'0354548956', N'Nữ', CAST(N'2000-09-17' AS Date), N'Hà Nội', CAST(0 AS Decimal(18, 0)), N'Admin', CAST(N'2022-01-01' AS Date), N'Admin', CAST(N'2022-01-01' AS Date))
+GO
+INSERT [dbo].[Staff] ([Id], [UserName], [Password], [Name], [IdentityCard], [Phone], [Sex], [Birthday], [Address], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(7 AS Decimal(18, 0)), N'admin', N'123456aA@', N'Chủ phòng', N'083422545', N'0123467356', N'Nam', CAST(N'1999-09-01' AS Date), N'Hà Nội', CAST(0 AS Decimal(18, 0)), N'Admin', CAST(N'2023-05-01' AS Date), NULL, NULL)
+GO
+SET IDENTITY_INSERT [dbo].[Staff] OFF
+GO
+SET IDENTITY_INSERT [dbo].[TypeMember] ON 
+GO
+INSERT [dbo].[TypeMember] ([Id], [Name], [Description], [Discount], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(1 AS Decimal(18, 0)), N'Khách hàng mới', N'Giảm giá 0% tổng hóa đơn', 0, CAST(0 AS Decimal(18, 0)), N'Admin', CAST(N'2022-01-01' AS Date), N'Admin', CAST(N'2022-01-01' AS Date))
+GO
+INSERT [dbo].[TypeMember] ([Id], [Name], [Description], [Discount], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(2 AS Decimal(18, 0)), N'VIP 1', N'Giảm giá 10% tổng hóa đơn', 10, CAST(0 AS Decimal(18, 0)), N'Admin', CAST(N'2022-01-01' AS Date), N'Admin', CAST(N'2022-01-01' AS Date))
+GO
+INSERT [dbo].[TypeMember] ([Id], [Name], [Description], [Discount], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(3 AS Decimal(18, 0)), N'VIP 2', N'Giảm giá 15% tổng hóa đơn', 15, CAST(0 AS Decimal(18, 0)), N'Admin', CAST(N'2022-01-01' AS Date), N'Admin', CAST(N'2022-01-01' AS Date))
+GO
+INSERT [dbo].[TypeMember] ([Id], [Name], [Description], [Discount], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(4 AS Decimal(18, 0)), N'VIP 3', N'Giảm giá 20% tổng hóa đơn', 20, CAST(0 AS Decimal(18, 0)), N'Admin', CAST(N'2022-01-01' AS Date), N'Admin', CAST(N'2022-01-01' AS Date))
+GO
+SET IDENTITY_INSERT [dbo].[TypeMember] OFF
+GO
+INSERT [dbo].[VoucherPackge] ([Id], [Code], [Count], [Description], [OpenTime], [CloseTime], [Status], [VoucherType], [Discount], [MinTotalBill], [ForMemberType], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(1 AS Decimal(18, 0)), N'NoelGym', CAST(100 AS Decimal(18, 0)), N'Giảm giá 20% cho khách đăng ký', CAST(N'2022-12-22T00:00:00.000' AS DateTime), CAST(N'2022-12-25T00:00:00.000' AS DateTime), N'E', CAST(0 AS Decimal(1, 0)), CAST(20 AS Decimal(18, 0)), CAST(300000 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'Admin', CAST(N'2022-01-01' AS Date), N'Admin', CAST(N'2022-01-01' AS Date))
+GO
+INSERT [dbo].[VoucherPackge] ([Id], [Code], [Count], [Description], [OpenTime], [CloseTime], [Status], [VoucherType], [Discount], [MinTotalBill], [ForMemberType], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(2 AS Decimal(18, 0)), N'GYM999', CAST(999 AS Decimal(18, 0)), N'Giảm 60k cho người mới đăng ký', CAST(N'2022-01-01T00:00:00.000' AS DateTime), CAST(N'2022-12-31T00:00:00.000' AS DateTime), N'A', CAST(1 AS Decimal(1, 0)), CAST(60000 AS Decimal(18, 0)), CAST(300000 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'Admin', CAST(N'2022-01-01' AS Date), N'Admin', CAST(N'2022-01-01' AS Date))
+GO
+INSERT [dbo].[VoucherPackge] ([Id], [Code], [Count], [Description], [OpenTime], [CloseTime], [Status], [VoucherType], [Discount], [MinTotalBill], [ForMemberType], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(3 AS Decimal(18, 0)), N'VIP1', CAST(99 AS Decimal(18, 0)), N'Giảm 10% tổng hóa đơn', CAST(N'2022-01-01T00:00:00.000' AS DateTime), CAST(N'2022-12-31T00:00:00.000' AS DateTime), N'A', CAST(0 AS Decimal(1, 0)), CAST(10 AS Decimal(18, 0)), CAST(300000 AS Decimal(18, 0)), CAST(2 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'Admin', CAST(N'2022-01-01' AS Date), N'Admin', CAST(N'2022-01-01' AS Date))
+GO
+INSERT [dbo].[VoucherPackge] ([Id], [Code], [Count], [Description], [OpenTime], [CloseTime], [Status], [VoucherType], [Discount], [MinTotalBill], [ForMemberType], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(4 AS Decimal(18, 0)), N'VIP2', CAST(100 AS Decimal(18, 0)), N'Giảm 15% tổng hóa đơn', CAST(N'2022-01-01T00:00:00.000' AS DateTime), CAST(N'2022-12-31T00:00:00.000' AS DateTime), N'A', CAST(0 AS Decimal(1, 0)), CAST(15 AS Decimal(18, 0)), CAST(300000 AS Decimal(18, 0)), CAST(3 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'Admin', CAST(N'2022-01-01' AS Date), N'Admin', CAST(N'2022-01-01' AS Date))
+GO
+INSERT [dbo].[VoucherPackge] ([Id], [Code], [Count], [Description], [OpenTime], [CloseTime], [Status], [VoucherType], [Discount], [MinTotalBill], [ForMemberType], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(5 AS Decimal(18, 0)), N'VIP3', CAST(100 AS Decimal(18, 0)), N'Giảm 20% tổng hóa đơn', CAST(N'2022-01-01T00:00:00.000' AS DateTime), CAST(N'2022-12-31T00:00:00.000' AS DateTime), N'A', CAST(0 AS Decimal(1, 0)), CAST(20 AS Decimal(18, 0)), CAST(300000 AS Decimal(18, 0)), CAST(4 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'Admin', CAST(N'2022-01-01' AS Date), N'Admin', CAST(N'2022-01-01' AS Date))
+GO
+INSERT [dbo].[VoucherPackge] ([Id], [Code], [Count], [Description], [OpenTime], [CloseTime], [Status], [VoucherType], [Discount], [MinTotalBill], [ForMemberType], [Deleted], [Created_By], [Created_Date], [Modified_By], [Modified_Date]) VALUES (CAST(6 AS Decimal(18, 0)), N'OK789', CAST(100 AS Decimal(18, 0)), N'Giảm 100k cho người mới', CAST(N'2022-01-01T00:00:00.000' AS DateTime), CAST(N'2022-06-06T00:00:00.000' AS DateTime), N'P', CAST(1 AS Decimal(1, 0)), CAST(70000 AS Decimal(18, 0)), CAST(300000 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), CAST(0 AS Decimal(18, 0)), N'Admin', CAST(N'2022-01-01' AS Date), N'Admin', CAST(N'2022-01-01' AS Date))
+GO
+ALTER TABLE [dbo].[MemberCard] ADD  CONSTRAINT [DF__MemberCar__Delet__2B3F6F97]  DEFAULT ((0)) FOR [Deleted]
+GO
+ALTER TABLE [dbo].[Packge] ADD  CONSTRAINT [DF_Packge_Discount]  DEFAULT ((1)) FOR [Discount]
+GO
+ALTER TABLE [dbo].[Packge] ADD  DEFAULT ((0)) FOR [Deleted]
+GO
+ALTER TABLE [dbo].[Staff] ADD  CONSTRAINT [DF__Staff__Deleted__33D4B598]  DEFAULT ((0)) FOR [Deleted]
+GO
+ALTER TABLE [dbo].[TypeMember] ADD  DEFAULT ((0)) FOR [Deleted]
+GO
+ALTER TABLE [dbo].[VoucherPackge] ADD  CONSTRAINT [DF_VoucherPackge_Status]  DEFAULT ((0)) FOR [Status]
+GO
+ALTER TABLE [dbo].[VoucherPackge] ADD  CONSTRAINT [DF__VoucherPa__Delet__398D8EEE]  DEFAULT ((0)) FOR [Deleted]
+GO
+ALTER TABLE [dbo].[DebitDetail]  WITH CHECK ADD  CONSTRAINT [FK_DebitDetail_Invoice] FOREIGN KEY([InvoiceId])
+REFERENCES [dbo].[Invoice] ([Id])
+GO
+ALTER TABLE [dbo].[DebitDetail] CHECK CONSTRAINT [FK_DebitDetail_Invoice]
+GO
+ALTER TABLE [dbo].[Invoice]  WITH CHECK ADD  CONSTRAINT [FK_Invoice_MemberPackge] FOREIGN KEY([MemberPackgeId])
+REFERENCES [dbo].[MemberPackge] ([Id])
+GO
+ALTER TABLE [dbo].[Invoice] CHECK CONSTRAINT [FK_Invoice_MemberPackge]
+GO
+ALTER TABLE [dbo].[InvoiceDebit]  WITH CHECK ADD  CONSTRAINT [FK_InvoiceDebit_InvoiceDebit] FOREIGN KEY([DebitDetailId])
+REFERENCES [dbo].[DebitDetail] ([Id])
+GO
+ALTER TABLE [dbo].[InvoiceDebit] CHECK CONSTRAINT [FK_InvoiceDebit_InvoiceDebit]
+GO
+ALTER TABLE [dbo].[MemberCard]  WITH CHECK ADD  CONSTRAINT [FK_Member_TypeMenber] FOREIGN KEY([TypeMemberId])
+REFERENCES [dbo].[TypeMember] ([Id])
+GO
+ALTER TABLE [dbo].[MemberCard] CHECK CONSTRAINT [FK_Member_TypeMenber]
+GO
+ALTER TABLE [dbo].[MemberPackge]  WITH CHECK ADD  CONSTRAINT [FK_MemberPackge_MemberCard] FOREIGN KEY([MemberCardId])
+REFERENCES [dbo].[MemberCard] ([Id])
+GO
+ALTER TABLE [dbo].[MemberPackge] CHECK CONSTRAINT [FK_MemberPackge_MemberCard]
+GO
+ALTER TABLE [dbo].[MemberPackge]  WITH CHECK ADD  CONSTRAINT [FK_MemberPackge_Packge1] FOREIGN KEY([PackgeId])
+REFERENCES [dbo].[Packge] ([Id])
+GO
+ALTER TABLE [dbo].[MemberPackge] CHECK CONSTRAINT [FK_MemberPackge_Packge1]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_allcode_getByCdNamCdType]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[sp_allcode_getByCdNamCdType]
+(
+	@p_cdName nvarchar(max),
+	@p_cdType nvarchar(max)
+)
+AS
+	SELECT * FROM AllCode WHERE CDName = @p_cdName AND CDType = @p_cdType;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_debitdetail_getByMemberpackgeId]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[sp_debitdetail_getByMemberpackgeId]
+(
+    @p_memberPackgelId decimal(18,0),
+	@result cursor VARYING out
+)
+AS
+	SET @result = CURSOR FORWARD_ONLY STATIC FOR 
+		SELECT * FROM DebitDetail a
+		JOIN Invoice b ON a.InvoiceId = b.Id AND b.InvoiceType = 2
+		WHERE b.Status = 'N';
+	OPEN @result;
+	
+GO
+/****** Object:  StoredProcedure [dbo].[sp_debitdetail_getDetail]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[sp_debitdetail_getDetail]
+(
+	@p_memberPackgeId decimal(18,0)
+)
+AS
+BEGIN
+	SELECT a.*, CASE WHEN (DATEDIFF(day, a.PaymentDeadline, GETDATE())) < 0 THEN 0 ELSE (DATEDIFF(day, a.PaymentDeadline, GETDATE())) END  AS DateLate,
+	 (i.Total-i.Discount) * 0.05 * CASE WHEN (DATEDIFF(day, a.PaymentDeadline, GETDATE())) < 0 THEN 0 ELSE (DATEDIFF(day, a.PaymentDeadline, GETDATE())) END AS Fine,
+	 i.MemberPackgeId
+	 FROM DebitDetail a
+	 JOIN Invoice i ON i.MemberPackgeId = @p_memberPackgeId AND i.Status = 'P' AND i.InvoiceType = 1
+END
+GO
+/****** Object:  StoredProcedure [dbo].[sp_DiscountInvoice]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROC [dbo].[sp_DiscountInvoice]
+@datesearch date
+as
+begin
+	select * from Invoice where IssuDate = @datesearch and Discount > 0
+end
+GO
+/****** Object:  StoredProcedure [dbo].[sp_invoice_getById]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[sp_invoice_getById]
+(
+	@p_id decimal(18,0)
+)
+AS
+BEGIN
+	SELECT ROW_NUMBER() OVER(ORDER BY IssuDate DESC) STT, a.Id, a.Code, c.Name MemberName ,
+	d.Name PackgeName, a.PackgePeriod, a.Total, a.InvoiceIssuer, a.IssuDate, CAST(a.IssuDate AS DATE),
+	c.Code FROM Invoice a
+	JOIN MemberPackge b ON a.MemberPackgeId = b.Id
+	JOIN MemberCard c on b.MemberCardId = c.Id
+	JOIN Packge d ON b.PackgeId = d.Id
+	WHERE a.Id = @p_id;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[sp_invoice_search]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[sp_invoice_search]
+(
+		@p_key_search NVARCHAR(max),
+        @p_startrow INT,
+        @p_endrow INT,
+        @p_orderby VARCHAR(100),
+        @p_total_record DECIMAL(18,0) OUT
+)
+AS
+BEGIN
+		DECLARE v_cur_condition CURSOR FOR 
+		SELECT [str] AS condition FROM [dbo].[FN_ParserStrToRow](@p_key_search,'|');
+		
+        DECLARE @v_condition NVARCHAR(max) = '';
+		DECLARE @v_sql NVARCHAR(max);
+        DECLARE @v_sqlTableParamSearch NVARCHAR(max);
+        DECLARE @v_sqlTotal_record NVARCHAR(max);
+        DECLARE @v_orderby NVARCHAR(max) = '';
+
+        DECLARE @v_member_id NVARCHAR(max) = '';
+        DECLARE @v_invoice_issuer NVARCHAR(max) = '';
+        DECLARE @v_issue_date NVARCHAR(max) = '';
+        
+		--SET ORDER BY
+		IF LEN(@p_orderby) > 0 
+           SET @v_orderby = @p_orderby;
+        ELSE BEGIN
+           SET @v_orderby = ' IssuDate DESC';
+        END;
+
+		--GET AND SET INFO SEARCH FROM KEY SEARCH
+		DECLARE @v_index INT = 1;
+		DECLARE @item NVARCHAR(max) = '';
+		OPEN v_cur_condition;
+		FETCH NEXT FROM v_cur_condition INTO @item
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			IF @v_index = 1
+                SET @v_member_id = @item;
+            ELSE IF @v_index = 2
+                SET @v_invoice_issuer = @item;
+            ELSE IF @v_index = 3 BEGIN
+                SET @v_issue_date = @item;
+			END;
+			SET @v_index = @v_index + 1;
+			FETCH NEXT FROM v_cur_condition INTO @item
+		END;
+		CLOSE v_cur_condition      
+		DEALLOCATE v_cur_condition 
+		
+		--SET QUERY WITH KEY SEARCH
+		IF LEN(@v_member_id) > 0 BEGIN
+            SET @v_condition = @v_condition + ' AND b.MemberCardId = CD.v_member_id';
+        END;
+
+		IF LEN(@v_invoice_issuer) > 0 BEGIN
+            SET @v_condition = @v_condition + ' AND a.InvoiceIssuer = CD.v_invoice_issuer';
+        END;
+
+		IF LEN(@v_issue_date) > 0 BEGIN
+            SET @v_condition = @v_condition + ' AND CAST(a.IssuDate AS DATE) = CAST(CD.v_issue_date AS DATE) ';
+        END;
+		
+        SET @v_sqlTableParamSearch = '
+			WITH TableCondition AS 
+			(
+				SELECT @v_member_id AS v_member_id, @v_invoice_issuer AS v_invoice_issuer, @v_issue_date  AS v_issue_date
+			)
+			';
+
+		SET @v_sql = '
+			SELECT T.* FROM
+			(
+				SELECT a.Id, a.Code, c.Name MemberName ,d.Name PackgeName, a.PackgePeriod, a.Total, a.InvoiceIssuer, a.IssuDate FROM Invoice a
+				JOIN MemberPackge b ON a.MemberPackgeId = b.Id
+				JOIN MemberCard c on b.MemberCardId = c.Id
+				JOIN Packge d ON b.PackgeId = d.Id
+				CROSS JOIN TableCondition CD
+				WHERE 0 = 0 '+ @v_condition + ' 
+			)T ';
+
+		--get total row by condition
+		SET @v_sqlTotal_record = @v_sqlTableParamSearch + 'SELECT @p_total_record = COUNT(*) FROM (' + @v_sql + ') AS o';
+		EXECUTE sp_executesql 
+			@v_sqlTotal_record, 
+			N'@p_total_record decimal(18,0) OUT, @v_member_id NVARCHAR(max), @v_invoice_issuer NVARCHAR(max), @v_issue_date NVARCHAR(max)', 
+			@p_total_record OUT, @v_member_id = @v_member_id, @v_invoice_issuer = @v_invoice_issuer, @v_issue_date = @v_issue_date;
+		
+		--paging list
+		SET @v_sql = 'SELECT ROW_NUMBER() over(ORDER BY ' + @v_orderby + ') STT, V.* FROM( ' + @v_sql + ') V ';
+
+		IF @p_startrow > 0 AND @p_endrow > 0 
+			--get by paging
+            SET @v_sql = @v_sqlTableParamSearch + 'SELECT * FROM (' + @v_sql  + ') AS R WHERE STT BETWEEN @p_startrow AND @p_endrow ';	
+        ELSE BEGIN
+			--get all
+            SET @v_sql = @v_sqlTableParamSearch + 'SELECT * FROM (' + @v_sql  + ') AS R WHERE @p_startrow = @p_startrow ';
+		END;
+
+		PRINT @v_sql;
+
+		EXECUTE sp_executesql 
+			@v_sql, 
+			N'@v_member_id NVARCHAR(max), @v_invoice_issuer NVARCHAR(max), 
+			@v_issue_date NVARCHAR(max),  @p_startrow INT, @p_endrow INT', 
+			@v_member_id = @v_member_id, @v_invoice_issuer = @v_invoice_issuer, 
+			@v_issue_date = @v_issue_date, @p_startrow = @p_startrow, @p_endrow = @p_endrow;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[sp_invoicedebit_insert]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[sp_invoicedebit_insert]
+(
+	@p_debitDetailId decimal(18,0),
+	@p_fine decimal(18,0),
+	@p_invoiceIssuer nvarchar(200),
+	@p_paymentDate date,
+
+	@p_memberPackgeId decimal(18,0),
+	@p_invoiceId decimal(18,0),
+
+	@p_result decimal(18,0) out
+)
+AS
+BEGIN
+SET NOCOUNT ON;
+BEGIN TRAN
+	BEGIN TRY
+		INSERT INTO InvoiceDebit (DebitDetailId, Fine, PaymentDay, InvoiceIssuer)
+		VALUES(@p_debitDetailId, @p_fine, @p_paymentDate, @p_invoiceIssuer);
+		
+		--cập nhập trạng thái hoàn thành nợ
+			UPDATE MemberPackge SET
+				Status = 'A'
+			WHERE Id = @p_memberPackgeId;
+
+			UPDATE DebitDetail SET
+				Status = 'A'
+			WHERE Id = @p_debitDetailId;
+
+			UPDATE Invoice SET
+				Status = 'A'
+			WHERE Id = @p_invoiceId;
+
+		SET @p_result = 1;
+	COMMIT TRAN;
+	END TRY  
+	BEGIN CATCH
+		ROLLBACK TRAN;
+		SET @p_result = -1102;
+	END CATCH
+END
+GO
+/****** Object:  StoredProcedure [dbo].[sp_membercard_delete]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[sp_membercard_delete]
+(
+	@p_id DECIMAL(18,0),
+    @p_modifiedBy varchar(max),
+    @p_modifiedDate date,
+
+    @p_result INT OUT
+)
+AS
+BEGIN
+	BEGIN TRY
+		DECLARE @v_exsited INT = 0
+
+		SELECT @v_exsited = COUNT(*) FROM MemberCard WHERE Id = @p_id AND Deleted = 0;
+		IF @v_exsited = 0 BEGIN
+			SET @p_result = -1003;	
+			RETURN;
+		END
+
+		UPDATE MemberCard SET
+			Deleted = 1,
+			Modified_By = @p_modifiedBy,
+			Modified_Date = @p_modifiedDate
+		WHERE Id = @p_id;
+
+		SET @p_result = @p_id;
+	END TRY
+	BEGIN CATCH 
+		ROLLBACK TRAN;
+		SET @p_result = -1011;
+	END CATCH
+END
+GO
+/****** Object:  StoredProcedure [dbo].[sp_membercard_getById]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[sp_membercard_getById]
+(
+	@p_id decimal(18,0)
+)
+AS
+BEGIN
+	SELECT a.*, b.Name TypeMemberName, al1.Content StatusText, b.Discount FROM MemberCard a
+	JOIN TypeMember b ON a.TypeMemberId = b.Id
+	LEFT JOIN AllCode al1 ON al1.CDName = 'MEMBERCARD' AND al1.CDType = 'STATUS' AND al1.CDVal = a.Status
+	WHERE a.Deleted = 0 and a.Id = @p_id;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[sp_membercard_insert]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[sp_membercard_insert]
+(
+    @p_typeMemberId decimal(18,0),
+    @p_imgLink nvarchar(max),
+	@p_name varchar(max),
+	@p_birthday date,
+    @p_address nvarchar(MAX),
+    @p_sex nvarchar(max),
+    @p_phone nvarchar(max),
+    @p_email nvarchar(max),
+    @p_identityCard nvarchar(max),
+    @p_identityAddress nvarchar(max),
+    @p_identityDate date,
+	@p_status nvarchar(max),
+    @p_createdBy varchar(max),
+    @p_createdDate date,
+
+    @p_result INT OUT
+)
+AS
+BEGIN
+SET NOCOUNT ON;
+BEGIN TRAN
+	BEGIN TRY
+		DECLARE @v_existed INT = 0,
+		@v_memberId decimal(18,0),
+		@v_memberCode NVARCHAR(max);
+
+		SELECT @v_existed = COUNT(*) from  MemberCard where UPPER(name) = UPPER(@p_name) and Deleted = 0;
+		IF @v_existed > 0 BEGIN
+			SET @p_result = -1002;
+			RETURN;
+		END;
+
+		SELECT @v_existed = COUNT(*) from  MemberCard where IdentityCard = @p_identityCard and Deleted = 0;
+		IF @v_existed > 0 BEGIN
+			SET @p_result = -1001;
+			RETURN;
+		END;
+
+		SELECT @v_memberId = NEXT VALUE FOR seq_memberCode; 
+
+		set @v_memberCode = 'KH' + CAST(@v_memberId AS NVARCHAR);
+
+		INSERT INTO MemberCard 
+			(Code,TypeMemberId, ImgLink, name, Birthday, Address, Sex, Phone, Email, IdentityCard, IdentityAddress, IdentityDate, 
+			Status,Created_By, Created_Date, Deleted)
+		VALUES
+			(@v_memberCode, 1, @p_imgLink, @p_name, @p_birthday, @p_address, @p_sex, @p_phone, @p_email, @p_identityCard, @p_identityAddress, @p_identityDate,
+			@p_status, @p_createdBy,@p_createdDate,0);
+		
+		SET @p_result = 1;
+		COMMIT TRAN;
+	END TRY  
+	BEGIN CATCH
+		ROLLBACK TRAN;
+		SET @p_result = -1102;
+	END CATCH
+END
+GO
+/****** Object:  StoredProcedure [dbo].[sp_membercard_search]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[sp_membercard_search]
+(
+		@p_key_search NVARCHAR(max),
+        @p_startrow INT,
+        @p_endrow INT,
+        @p_orderby VARCHAR(100),
+        @p_total_record DECIMAL(18,0) OUT
+)
+AS
+BEGIN
+		DECLARE v_cur_condition CURSOR FOR 
+		SELECT [str] AS condition FROM [dbo].[FN_ParserStrToRow](@p_key_search,'|');
+		
+        DECLARE @v_condition NVARCHAR(max) = '';
+		DECLARE @v_sql NVARCHAR(max);
+        DECLARE @v_sqlTableParamSearch NVARCHAR(max);
+        DECLARE @v_sqlTotal_record NVARCHAR(max);
+        DECLARE @v_orderby NVARCHAR(max) = '';
+
+        DECLARE @v_name NVARCHAR(max) = '';
+        DECLARE @v_typeMemberId NVARCHAR(max) = '';
+        DECLARE @v_status NVARCHAR(max) = '';
+        
+		--SET ORDER BY
+		IF LEN(@p_orderby) > 0 
+           SET @v_orderby = @p_orderby;
+        ELSE BEGIN
+           SET @v_orderby = ' Id DESC';
+        END;
+
+		--GET AND SET INFO SEARCH FROM KEY SEARCH
+		DECLARE @v_index INT = 1;
+		DECLARE @item NVARCHAR(max) = '';
+		OPEN v_cur_condition;
+		FETCH NEXT FROM v_cur_condition INTO @item
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			IF @v_index = 1
+                SET @v_name = @item;
+            ELSE IF @v_index = 2
+                SET @v_typeMemberId = @item;
+            ELSE IF @v_index = 3 BEGIN
+                SET @v_status = @item;
+			END;
+			SET @v_index = @v_index + 1;
+			FETCH NEXT FROM v_cur_condition INTO @item
+		END;
+		CLOSE v_cur_condition      
+		DEALLOCATE v_cur_condition 
+		
+		--SET QUERY WITH KEY SEARCH
+		IF LEN(@v_name) > 0 BEGIN
+            SET @v_condition = @v_condition + ' AND UPPER(a.Name) LIKE ''%'' + UPPER(cd.v_name) + ''%'' ';
+        END;
+
+		IF LEN(@v_typeMemberId) > 0 BEGIN
+            SET @v_condition = @v_condition + ' AND a.typeMemberId = CD.v_typeMemberId';
+        END;
+
+		IF LEN(@v_status) > 0 BEGIN
+            SET @v_condition = @v_condition + ' AND a.status = UPPER(CD.v_status) ';
+        END;
+		
+        SET @v_sqlTableParamSearch = '
+			WITH TableCondition AS 
+			(
+				SELECT @v_name AS v_name, @v_typeMemberId AS v_typeMemberId, @v_status  AS v_status
+			)
+			';
+
+		SET @v_sql = '
+			SELECT T.* FROM
+			(
+				SELECT a.*,b.Name TypeMemberName, al1.Content StatusText FROM MemberCard a
+				JOIN TypeMember b ON a.TypeMemberId = b.Id
+				LEFT JOIN AllCode al1 ON al1.CDName = ''MEMBERCARD'' AND al1.CDType = ''Status'' AND al1.CDVal = a.Status
+				CROSS JOIN TableCondition CD
+				WHERE a.Deleted = 0 '+ @v_condition + ' 
+			)T ';
+
+		--get total row by condition
+		SET @v_sqlTotal_record = @v_sqlTableParamSearch + 'SELECT @p_total_record = COUNT(*) FROM (' + @v_sql + ') AS o';
+		EXECUTE sp_executesql 
+			@v_sqlTotal_record, 
+			N'@p_total_record decimal(18,0) OUT, @v_name NVARCHAR(max), @v_typeMemberId NVARCHAR(max), @v_status NVARCHAR(max)', 
+			@p_total_record OUT, @v_name = @v_name, @v_typeMemberId = @v_typeMemberId, @v_status = @v_status;
+		
+		--paging list
+		SET @v_sql = 'SELECT ROW_NUMBER() over(ORDER BY ' + @v_orderby + ') STT, V.* FROM( ' + @v_sql + ') V ';
+
+		IF @p_startrow > 0 AND @p_endrow > 0 
+			--get by paging
+            SET @v_sql = @v_sqlTableParamSearch + 'SELECT * FROM (' + @v_sql  + ') AS R WHERE STT BETWEEN @p_startrow AND @p_endrow ';	
+        ELSE BEGIN
+			--get all
+            SET @v_sql = @v_sqlTableParamSearch + 'SELECT * FROM (' + @v_sql  + ') AS R WHERE @p_startrow = @p_startrow ';
+		END;
+
+		PRINT @v_sql;
+
+		EXECUTE sp_executesql 
+			@v_sql, 
+			N'@v_name NVARCHAR(max), @v_typeMemberId NVARCHAR(max), 
+			@v_status NVARCHAR(max),  @p_startrow INT, @p_endrow INT', 
+			@v_name = @v_name, @v_typeMemberId = @v_typeMemberId, 
+			@v_status = @v_status, @p_startrow = @p_startrow, @p_endrow = @p_endrow;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[sp_membercard_update]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[sp_membercard_update]
+(
+	@p_id DECIMAL(18,0),
+    @p_imgLink nvarchar(max),
+	@p_name varchar(max),
+	@p_birthday date,
+    @p_address nvarchar(MAX),
+    @p_sex nvarchar(max),
+    @p_phone nvarchar(max),
+    @p_email nvarchar(max),
+    @p_identityCard nvarchar(max),
+    @p_identityAddress nvarchar(max),
+    @p_identityDate date,
+	@p_status nvarchar(max),
+    @p_modifiedBy varchar(max),
+    @p_modifiedDate date,
+
+    @p_result INT OUT
+)
+AS
+BEGIN
+	BEGIN TRY
+		DECLARE @v_exsited INT = 0
+		--kiểm tra tồn tại
+		SELECT @v_exsited = COUNT(*) FROM MemberCard WHERE Id = @p_id AND Deleted = 0;
+		IF @v_exsited = 0 BEGIN
+			SET @p_result = -1003;	
+			RETURN;
+		END;
+
+		--Kiểm tra trùng tên
+		SET @v_exsited = 0;
+		SELECT @v_exsited = COUNT(*) from  MemberCard where UPPER(name) = UPPER(@p_name) AND Deleted = 0 AND Id != @p_id;
+		IF @v_exsited > 0 BEGIN
+			SET @p_result = -1001;
+			RETURN;
+		END;
+
+		SELECT @v_exsited = COUNT(*) from  MemberCard where IdentityCard = @p_identityCard AND Deleted = 0 AND Id != @p_id;
+		IF @v_exsited > 0 BEGIN
+			SET @p_result = -1002;
+			RETURN;
+		END;
+
+		UPDATE MemberCard SET
+			Name = @p_name,
+			ImgLink = @p_imgLink,
+			Birthday = @p_birthday,
+			Address = @p_address,
+			Sex = @p_sex,
+			Phone = @p_phone,
+			Email = @p_name,
+			IdentityCard = @p_identityCard,
+			IdentityAddress = @p_identityAddress,
+			IdentityDate = @p_identityDate,
+			Status = @p_status,
+			Modified_By = @p_modifiedBy,
+			Modified_Date = @p_modifiedDate
+		WHERE Id = @p_id;
+
+		SET @p_result = @p_id;
+	END TRY
+	BEGIN CATCH 
+		ROLLBACK TRAN;
+		SET @p_result = -1011;
+	END CATCH
+END
+GO
+/****** Object:  StoredProcedure [dbo].[sp_memberpackge_autoUpdateStatus]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[sp_memberpackge_autoUpdateStatus]
+AS
+BEGIN
+SET NOCOUNT ON;
+BEGIN TRAN
+	BEGIN TRY
+		DECLARE cur CURSOR FOR
+		SELECT MemberPackgeId, DateLate FROM view_DebitDetail a;
+
+		DECLARE @menberPackgeId decimal(18,0), @dateLate int;
+
+		OPEN cur;
+		FETCH NEXT FROM cur INTO @menberPackgeId, @dateLate;
+		WHILE(@@FETCH_STATUS = 0) BEGIN
+			IF @dateLate > 0 BEGIN 
+				UPDATE MemberPackge SET
+					Status = 'L'
+				WHERE Id = @menberPackgeId
+			END;
+			FETCH NEXT FROM cur INTO @menberPackgeId, @dateLate;
+		END;
+		CLOSE cur;
+		DEALLOCATE cur;
+
+	COMMIT TRAN;
+	END TRY  
+	BEGIN CATCH
+		ROLLBACK TRAN;
+	END CATCH
+END
+GO
+/****** Object:  StoredProcedure [dbo].[sp_memberpackge_buy_packge]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[sp_memberpackge_buy_packge]
+(
+    @p_memberPackgeId decimal(18,0),
+	@p_packgeId decimal(18,0),
+    @p_memberCardId decimal(18,0),
+	@p_activeDate date,
+	@p_unactiveDate date,
+
+    @p_packgePeriod int,
+    @p_discount decimal(18,0),
+    @p_total decimal(18,0),
+    @p_cash decimal(18,0),
+    @p_invoiceType decimal(18,0),
+    @p_paymentType decimal(18,0),
+    @p_invoiceIssuer varchar(max),
+    @p_issuDate datetime,
+	@p_voucher varchar(max),
+    @p_result INT OUT
+)
+AS
+BEGIN
+SET NOCOUNT ON;
+BEGIN TRAN
+	BEGIN TRY
+		DECLARE @v_memberPackgeId decimal(18,0),
+					@v_invoiceId decimal(18,0),
+					@v_invoiceStatus nvarchar(1) = 'A',
+					@v_mbPackgeStatus nvarchar(1) = 'A';
+		SELECT @v_memberPackgeId = NEXT VALUE FOR seq_memberPackge;
+		SELECT @v_invoiceId = NEXT VALUE FOR seq_invoice; 
+
+		IF @p_memberPackgeId = 0 BEGIN
+			--Đăng ký mới
+			INSERT INTO MemberPackge(Id, MemberCardId, PackgeId, ActiveDay, UnActiveDay, Status ) 
+			VALUES(@v_memberPackgeId, @p_memberCardId, @p_packgeId, @p_activeDate, @p_unactiveDate, @v_mbPackgeStatus);
+			
+			INSERT INTO Invoice(Id,MemberPackgeId, PackgePeriod, Discount, Total, Cash, InvoiceType, PaymentType, Status, InvoiceIssuer, IssuDate, Voucher )
+			VALUES(@v_invoiceId, @v_memberPackgeId, @p_packgePeriod, @p_discount, @p_total, @p_cash, @p_invoiceType, @p_paymentType, @v_invoiceStatus, @p_invoiceIssuer, @p_issuDate, @p_voucher);
+		END ELSE BEGIN
+		--Gia hạn 
+			SET @v_memberPackgeId = @p_memberPackgeId;
+
+			UPDATE MemberPackge SET
+				UnActiveDay = @p_unactiveDate
+			WHERE Id = @p_memberPackgeId;
+			 
+			INSERT INTO Invoice(Id,MemberPackgeId, PackgePeriod, Discount, Total, Cash, InvoiceType, PaymentType, Status, InvoiceIssuer, IssuDate, Voucher )
+			VALUES(@v_invoiceId, @p_memberPackgeId, @p_packgePeriod, @p_discount, @p_total, @p_cash, @p_invoiceType, @p_paymentType, @v_invoiceStatus, @p_invoiceIssuer, @p_issuDate, @p_voucher);
+		END;
+
+		--đối với hóa đơn ghi nợ thì tạo thông tin nợ
+		IF @p_invoiceType = 1 BEGIN 
+			INSERT INTO DebitDetail(InvoiceId,Debit, PaymentDeadline, Status, Created_By, Created_Date)
+			VALUES(@v_invoiceId, @p_total - @p_cash, DATEADD(day, 15, @p_issuDate), 'P', @p_invoiceIssuer, @p_issuDate);
+
+			--trạng thái chờ trả nợ
+			UPDATE MemberPackge SET
+				Status = 'P'
+			WHERE Id = @v_memberPackgeId;
+
+			UPDATE Invoice SET
+				Status = 'P'
+			WHERE Id = @v_invoiceId;
+		END;
+
+		--tổng số tiền đã thanh toán
+		DECLARE @totalPayment decimal(18,0);
+		SELECT @totalPayment=dbo.FN_TotalPayment(@p_memberCardId);
+
+		--nâng cấp loại thành viên
+		IF @totalPayment >= 2000000 BEGIN
+			UPDATE MemberCard SET
+				TypeMemberId = 2
+			WHERE Id = @p_memberCardId;
+		END 
+		ELSE IF @totalPayment >= 5000000 BEGIN 
+			UPDATE MemberCard SET
+				TypeMemberId = 3
+			WHERE Id = @p_memberCardId;
+		END;
+		ELSE IF @totalPayment >= 100000000 BEGIN 
+			UPDATE MemberCard SET
+				TypeMemberId = 4
+			WHERE Id = @p_memberCardId;
+		END;
+
+		SET @p_result = 1;
+		COMMIT TRAN;
+	END TRY  
+	BEGIN CATCH
+		ROLLBACK TRAN;
+		SET @p_result = -1102;
+	END CATCH
+END
+GO
+/****** Object:  StoredProcedure [dbo].[sp_memberpackge_buy_packge_v2]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[sp_memberpackge_buy_packge_v2]
+(
+    @p_memberPackgeId decimal(18,0),
+	@p_packgeId decimal(18,0),
+    @p_memberCardId decimal(18,0),
+	@p_activeDate date,
+	@p_unactiveDate date,
+
+    @p_packgePeriod int,
+    @p_discount decimal(18,0),
+    @p_total decimal(18,0),
+    @p_paymentType decimal(18,0),
+    @p_invoiceIssuer varchar(max),
+    @p_issuDate datetime,
+	@p_voucher varchar(max),
+    @p_result INT OUT
+)
+AS
+BEGIN
+SET NOCOUNT ON;
+BEGIN TRAN
+	BEGIN TRY
+		DECLARE @v_memberPackgeId decimal(18,0),
+					@v_invoiceId decimal(18,0),
+					@v_invoiceCode nvarchar(max),
+					@v_invoiceStatus nvarchar(1) = 'A',
+					@v_mbPackgeStatus nvarchar(1) = 'A';
+		SELECT @v_memberPackgeId = NEXT VALUE FOR seq_memberPackge;
+		SELECT @v_invoiceId = NEXT VALUE FOR seq_invoice; 
+		SET @v_invoiceCode = 'HD' + CAST(@v_invoiceId AS nvarchar(max)) ;
+		IF @p_memberPackgeId = 0 BEGIN
+			--Đăng ký mới
+			INSERT INTO MemberPackge(Id, MemberCardId, PackgeId, ActiveDay, UnActiveDay, Status ) 
+			VALUES(@v_memberPackgeId, @p_memberCardId, @p_packgeId, @p_activeDate, @p_unactiveDate, @v_mbPackgeStatus);
+			
+			INSERT INTO Invoice(Id, Code,MemberPackgeId, PackgePeriod, Discount, Total, PaymentType, Status, InvoiceIssuer, IssuDate, Voucher )
+			VALUES(@v_invoiceId, @v_invoiceCode, @v_memberPackgeId, @p_packgePeriod, @p_discount, @p_total, @p_paymentType, @v_invoiceStatus, @p_invoiceIssuer, @p_issuDate, @p_voucher);
+		END ELSE BEGIN
+		--Gia hạn 
+			UPDATE MemberPackge SET
+				UnActiveDay = @p_unactiveDate
+			WHERE Id = @p_memberPackgeId;
+			 
+			INSERT INTO Invoice(Id, Code,MemberPackgeId, PackgePeriod, Discount, Total, PaymentType, Status, InvoiceIssuer, IssuDate, Voucher )
+			VALUES(@v_invoiceId, @v_invoiceCode, @p_memberPackgeId, @p_packgePeriod, @p_discount, @p_total, @p_paymentType, @v_invoiceStatus, @p_invoiceIssuer, @p_issuDate, @p_voucher);
+		END;
+
+		--tổng số tiền đã thanh toán
+		DECLARE @totalPayment decimal(18,0);
+		SELECT @totalPayment=dbo.FN_TotalPayment(@p_memberCardId);
+
+		--nâng cấp loại thành viên
+		IF @totalPayment >= 2000000 BEGIN
+			UPDATE MemberCard SET
+				TypeMemberId = 2
+			WHERE Id = @p_memberCardId;
+		END 
+		ELSE IF @totalPayment >= 5000000 BEGIN 
+			UPDATE MemberCard SET
+				TypeMemberId = 3
+			WHERE Id = @p_memberCardId;
+		END;
+		ELSE IF @totalPayment >= 100000000 BEGIN 
+			UPDATE MemberCard SET
+				TypeMemberId = 4
+			WHERE Id = @p_memberCardId;
+		END;
+
+		SET @p_result = @v_invoiceId;
+		COMMIT TRAN;
+	END TRY  
+	BEGIN CATCH
+		ROLLBACK TRAN;
+		SET @p_result = -1102;
+	END CATCH
+END
+GO
+/****** Object:  StoredProcedure [dbo].[sp_memberpackge_by_memberCardId]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[sp_memberpackge_by_memberCardId]
+(
+	@memberCardId decimal(18,0)
+)
+AS
+BEGIN
+	SELECT ROW_NUMBER() over(ORDER BY a.PackgeName) STT, a.*, (CASE WHEN a.DaysLeft < 0 THEN 0 ELSE a.DaysLeft END) DaysLeft, 
+	(CASE WHEN a.DaysLeft < 0 THEN 0 ELSE a.DaysLeft END) / 30 MonthsLeft
+	FROM(
+		SELECT a.*, (DATEDIFF(day, GETDATE(), a.UnActiveDay) ) AS DaysLeft, b.Name PackgeName,
+		al.Content StatusText
+		FROM MemberPackge a 
+		JOIN Packge b On a.PackgeId = b.Id AND b.Deleted = 0
+		LEFT JOIN AllCode al ON al.CDName = 'MEMBERPACKGE' AND al.CDType = 'STATUS' AND al.CDVal = a.Status
+		WHERE MemberCardId = @memberCardId
+	) a;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[sp_packge_MemberNotBuy]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[sp_packge_MemberNotBuy]
+(
+	@memberCardId decimal(18,0)
+)
+AS
+BEGIN
+	SELECT a.*, ((1-a.Discount/100) * a.Price) PriceAfterDiscount FROM Packge a
+	WHERE a.Id NOT IN (
+		SELECT PackgeId FROM MemberPackge WHERE MemberCardId = @memberCardId)
+		AND a.Deleted = 0;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[sp_PackgeTop1]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROC [dbo].[sp_PackgeTop1]
+as
+begin
+
+Select Top 1 a.Sold,a.PackgeId, Name from (
+
+	Select SUM(PackgePeriod) as Sold, PackgeId from Invoice 
+	join MemberPackge on Invoice.MemberPackgeId = MemberPackge.Id 
+	group by PackgeId  ) a 
+join Packge on Packge.Id = a.PackgeId
+order by a.Sold desc
+
+end
+GO
+/****** Object:  StoredProcedure [dbo].[sp_staff_getAll]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[sp_staff_getAll]
+AS
+BEGIN
+	SELECT * FROM Staff WHERE Deleted = 0;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[sp_typemember_getall]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[sp_typemember_getall]
+AS
+	SELECT * FROM TypeMember WHERE Deleted= 0;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_vourcherpackge_getByCode]    Script Date: 23/06/2023 5:10:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[sp_vourcherpackge_getByCode]
+(
+	@p_code nvarchar(max)
+)
+AS
+BEGIN
+	SELECT a.* FROM VoucherPackge a WHERE UPPER(a.Code) = UPPER(@p_code);
+END
+GO
+USE [master]
+GO
+ALTER DATABASE [GymManagement] SET  READ_WRITE 
+GO
