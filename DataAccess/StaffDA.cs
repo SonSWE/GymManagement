@@ -73,7 +73,7 @@ namespace DataAccess
                     con.Open();
                     string query = "INSERT INTO Staff (Name, Birthday, Address, Sex, Phone, IdentityCard)"
                         + $"VALUES(N'{_info.Name}', '{_info.Birthday.ToString("yyyy-MM-dd")}',N'{_info.Address}',N'{_info.Sex}','{_info.Phone}','{_info.IdentityCard}');";
-                    SqlHelper.ExecuteNonQuery(query, CommandType.Text, query);
+                    SqlHelper.ExecuteNonQuery(con, CommandType.Text, query);
                     con.Close();
                     return 8000;
                 }
@@ -99,7 +99,7 @@ namespace DataAccess
                         + $"Phone = '{_info.Phone}',"
                         + $"IdentityCard = '{_info.IdentityCard}'"
                         + $"WHERE Id = {_info.Id};";
-                    SqlHelper.ExecuteNonQuery(query, CommandType.Text, query);
+                    SqlHelper.ExecuteNonQuery(con, CommandType.Text, query);
                     con.Close();
                     return _info.Id;
                 }

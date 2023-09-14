@@ -21,7 +21,7 @@
                                 <div class="flex-report">
                                     <div class="title-report">Tên gói tập:</div>
                                     <div class="field-report">
-                                        <input type="text" id="name" placeholder="Tên gói tập" value="@_info.Name">
+                                        <input type="text" id="name" placeholder="Tên gói tập" value="@_info.Name" disabled>
                                     </div>
                                 </div>
                             </div>
@@ -30,7 +30,7 @@
                                 <div class="flex-report">
                                     <div class="title-report">Giá:</div>
                                     <div class="field-report">
-                                        <input type="text" id="price" placeholder="Giá" value="@_info.Price">
+                                        <input type="text" id="price" placeholder="Giá" value="@_info.Price" disabled>
                                     </div>
                                 </div>
                             </div>
@@ -39,7 +39,7 @@
                                 <div class="flex-report">
                                     <div class="title-report">Giảm giá (%):</div>
                                     <div class="field-report">
-                                        <input type="text" id="discount" value="@(_info.Discount * 100)">
+                                        <input type="text" id="discount" value="@(_info.Discount * 100)" disabled>
                                     </div>
                                 </div>
                             </div>
@@ -48,7 +48,7 @@
                                 <div class="flex-report">
                                     <div class="title-report">Mô tả:</div>
                                     <div class="field-report">
-                                        <textarea id="description" style="height: 68px !important;" rows="3">@_info.Description</textarea>
+                                        <textarea id="description" style="height: 68px !important;" rows="3" disabled>@_info.Description</textarea>
                                     </div>
                                 </div>
                             </div>

@@ -4,8 +4,8 @@
     List<UserInfo> _lstData = ViewBag.LstData != null ? ViewBag.LstData : new List<UserInfo>();
 }
 <h4 class="card-title">Kết quả tìm kiếm</h4>
-<div class="table-responsive">
-    <table class="table table-hover">
+<div class="main-table-responsive">
+    <table>
         <thead>
             <tr>
                 <th>Tên</th>
@@ -28,15 +28,20 @@
                         <td>@item.Address</td>
                         <td>@item.Phone</td>
                         <td>
-                            <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon">
-                                <i class="mdi mdi-delete text-danger">Xóa</i>
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon" onclick="location.href = '/nhan-vien/chi-tiet/@item.Id'">
-                                <i class="mdi mdi-file-find text-dark">Xem</i>
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon" onclick="location.href = '/nhan-vien/cap-nhat/@item.Id'">
-                                <i class="mdi mdi-border-color text-dark">Sửa</i>
-                            </button>
+                            <div class="divButton">
+                                <button class="button-table" onclick="location.href = '/nhan-vien/chi-tiet/@item.Id'">
+                                    <img src="/css/image/view.png" />
+                                </button>
+                                <div class="tooltip-table">Xem</div>
+                            </div>
+                            <div class="divButton">
+                                <button class="button-table" onclick="location.href = '/nhan-vien/cap-nhat/@item.Id'"><img src="/css/image/edit.png" /></button>
+                                <div class="tooltip-table">Cập nhật</div>
+                            </div>
+                            <div class="divButton">
+                                <button class="button-table" onclick=""><img src="/css/image/delete.png" /></button>
+                                <div class="tooltip-table">Xóa</div>
+                            </div>
                         </td>
                     </tr>
                 }

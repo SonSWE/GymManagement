@@ -7,68 +7,114 @@
     UserInfo _info = ViewBag.StaffInfo != null ? ViewBag.StaffInfo : new UserInfo();
 }
 <div class="row">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title">Cập nhật nhân viên</h4>
-            <form class="forms-sample" id="formStaffUpdate">
-                <input hidden value="@_info.Id" id="tmpId"/>
-                <div class="form-group">
-                    <label for="exampleInputUsername1">Tên thành viên<code>(*)</code></label>
-                    <input type="text" class="form-control" id="memberName" placeholder="Tên thành viên" value="@_info.Name">
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputPassword1">Ngày sinh<code>(*)</code></label>
-                    <input type="date" class="form-control" id="dpBirthday" placeholder="" value="@_info.Birthday.ToString("yyyy-MM-dd")">
-                </div>
-                <div class="form-group">
-                    <label for="exampleFormControlSelect2">Giới tính<code>(*)</code></label>
-                    <select class="form-control" id="sex">
-                        @if(_info.Sex == MemberSex.nu)
-                        {
-                            <option value="Nữ" selected>Nữ</option>
-                        }
-                        else
-                        {
-                            <option value="Nữ">Nữ</option>
-                        }
+    <form id="formStaffUpdate">
+        <input hidden value="@_info.Id" id="tmpId" />
+        <div class="card">
+            <div class="card-body">
+                <div class="group">
+                    <div class="title-group">
+                        <h4 class="card-title ">Thông tin cá nhân</h4>
+                        <hr>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Tên nhân viên<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input type="text" id="staffName" placeholder="Tên nhân viên" value="@_info.Name">
+                                        </div>
+                                    </div>
+                                </div>
 
-                        @if(_info.Sex == MemberSex.nam)
-                        {
-                            <option value="Nam" selected>Nam</option>
-                        }
-                        else
-                        {
-                            <option value="Nam">Nam</option>
-                        }
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Ngày sinh<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input type="date" id="dpBirthday" placeholder="" value="@_info.Birthday.ToString("yyyy-MM-dd")">
+                                        </div>
+                                    </div>
+                                </div>
 
-                        @if(_info.Sex == MemberSex.khac)
-                        {
-                            <option value="Khác" selected>Khác</option>
-                        }
-                        else
-                        {
-                            <option value="Khác">Khác</option>
-                        }
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Giới tính<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <select class="form-control" id="sex">
+                                                @if (_info.Sex == MemberSex.nu)
+                                                {
+                                                    <option value="Nữ" selected>Nữ</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="Nữ">Nữ</option>
+                                                }
 
-                    </select>
+                                                @if (_info.Sex == MemberSex.nam)
+                                                {
+                                                    <option value="Nam" selected>Nam</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="Nam">Nam</option>
+                                                }
+
+                                                @if (_info.Sex == MemberSex.khac)
+                                                {
+                                                    <option value="Khác" selected>Khác</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="Khác">Khác</option>
+                                                }
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Số diện thoại<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input type="text" id="phone" placeholder="Số diện thoại" value="@_info.Phone">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Địa chỉ<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input type="text" id="address" placeholder="" value="@_info.Address">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Số CMND/CCCD<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input type="text" id="identity" placeholder="Số CMND/CCCD" value="@_info.IdentityCard">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="exampleInputConfirmPassword1">Địa chỉ<code>(*)</code></label>
-                    <input type="text" class="form-control" id="address" placeholder="Địa chỉ" value="@_info.Address">
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="footer-form">
+                            <button type="submit" class="btn btn-success px-5"><i class="bx bx-home mr-1"></i>Lưu</button>
+                            <button type="button" class="btn btn-danger px-5 ml-1" onclick="history.back();"><i class="bx bx-bookmark mr-1"></i>Thoát</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="exampleInputConfirmPassword1">Số điện thoại<code>(*)</code></label>
-                    <input type="text" class="form-control" id="phone" placeholder="Số diện thoại" value="@_info.Phone">
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputConfirmPassword1">Số CMND/CCCD<code>(*)</code></label>
-                    <input type="text" class="form-control" id="identity" placeholder="Số CMND/CCCD" value="@_info.IdentityCard">
-                </div>
-                <button type="submit" class="btn btn-primary me-2">Lưu</button>
-                <button class="btn btn-light" onclick="history.back();">Quay lại</button>
-            </form>
+
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 
 <script>
@@ -81,7 +127,7 @@
             if (Validate()) {
                 var formData = new FormData(this);
                 formData.set("Id", $("#tmpId").val());
-                formData.set("Name", $("#memberName").val());
+                formData.set("Name", $("#staffName").val());
                 formData.set("Birthday", $("#dpBirthday").val());
                 formData.set("Address", $("#address").val());
                 formData.set("Sex", $("#sex").val());
@@ -94,19 +140,20 @@
                     url: '/nhan-vien/cap-nhat',
                     data: formData,
                     beforeSend: function () {
-                        
+                        SpinLoading(true);
                     },
                     contentType: false, processData: false,
                     success: function (data) {
                         if (data != null) {
                             
                             if(data.success > 0){
-                                alert(data.message);
+                                ShowSuccess(data.message);
                                 setTimeout(() => {
                                     window.location.href = "/nhan-vien/danh-sach";
                                 }, 2000);
                             }else{
-                                alert(data.message);
+                                SpinLoading(false);
+                                ShowError(data.message);
                             }
                         }
                     },
@@ -114,7 +161,7 @@
                         console.log(data);
                     },
                     complete: function () {
-                        
+                        SpinLoading(false);
                     }
                 });
             }
@@ -124,7 +171,7 @@
     });
 
     function Validate() {
-        if (!$("#memberName").val().trim()) {
+        if (!$("#staffName").val().trim()) {
             alert("Tên không được để trống");
             return false;
         }

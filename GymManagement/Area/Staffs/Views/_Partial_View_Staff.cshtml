@@ -6,36 +6,82 @@
     UserInfo _info = ViewBag.StaffInfo != null ? ViewBag.StaffInfo : new UserInfo();
 }
 <div class="row">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title">Thông tin chi tiết nhân viên</h4>
-            <form class="forms-sample">
-                <div class="form-group">
-                    <label for="exampleInputUsername1">Tên thành viên</label>
-                    <input type="text" disabled class="form-control" id="exampleInputUsername1" placeholder="" value="@_info.Name">
+    @* <form id="formStaffAdd"> *@
+        <div class="card">
+            <div class="card-body">
+                <div class="group">
+                    <div class="title-group">
+                        <h4 class="card-title ">Thông tin cá nhân</h4>
+                        <hr>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Tên nhân viên<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                        <input type="text" id="staffName" placeholder="Tên nhân viên" value="@_info.Name" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Ngày sinh<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                        <input type="date" id="dpBirthday" placeholder="" value="@_info.Birthday.ToString("dd-MM-yyyy")" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Giới tính<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                        <input type="date" id="sex" placeholder="" value="@_info.Sex" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Số diện thoại<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                        <input type="text" id="phone" placeholder="Số diện thoại" value="@_info.Phone" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Địa chỉ<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                        <input type="text" id="address" placeholder="" value="@_info.Address" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Số CMND/CCCD<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input type="text" id="identity" placeholder="Số CMND/CCCD" value="@_info.IdentityCard" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="exampleInputPassword1">Ngày sinh</label>
-                    <input type="text" disabled class="form-control" id="exampleInputUsername1" placeholder="" value="@_info.Birthday.ToString("dd/MM/yyyy")">
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="footer-form">
+                            <button type="button" class="btn btn-danger px-5 ml-1" onclick="history.back();"><i class="bx bx-bookmark mr-1"></i>Thoát</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="exampleFormControlSelect2">Giới tính</label>
-                    <input type="text" disabled class="form-control" id="exampleInputUsername1" placeholder="" value="@_info.Sex">
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputConfirmPassword1">Địa chỉ</label>
-                    <input type="text" disabled class="form-control" id="exampleInputUsername1" placeholder="" value="@_info.Address">
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputConfirmPassword1">Số điện thoại</label>
-                    <input type="text" disabled class="form-control" id="exampleInputUsername1" placeholder="" value="@_info.Phone">
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputConfirmPassword1">Số CMND/CCCD</label>
-                    <input type="text" disabled class="form-control" id="exampleInputUsername1" placeholder="" value="@_info.IdentityCard">
-                </div>
-                <button type="button" class="btn btn-light" onclick="window.location.href = '/nhan-vien/danh-sach';">Quay lại</button>
-            </form>
+
+            </div>
         </div>
-    </div>
+    @* </form> *@
 </div>
