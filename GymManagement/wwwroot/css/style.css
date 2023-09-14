@@ -7,6 +7,31 @@ hr {
     border: 0.5px solid #c3c6c8 !important;
 }
 
+.item-search input:disabled {
+    background-color: lightgray;
+}
+
+.field-report input:disabled {
+    background-color: lightgray;
+}
+
+.field-report textarea:disabled {
+    background-color: lightgray;
+}
+
+.field-report select:disabled {
+    background-color: lightgray;
+}
+
+
+.form-control:disabled {
+    background-color: lightgray;
+}
+
+.form-control {
+    -webkit-appearance: auto;
+}
+
 .container-scroller {
     overflow: hidden;
 }
@@ -239,6 +264,7 @@ label {
 }
 
     .main-table-responsive table {
+        width: 100%;
         border-collapse: collapse;
         margin-bottom: 1rem;
         color: #212529;

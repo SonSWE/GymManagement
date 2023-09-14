@@ -7,32 +7,69 @@
     PackgeInfo _info = ViewBag.PackgeInfo != null ? ViewBag.PackgeInfo : new PackgeInfo();
 }
 <div class="row">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title">Cập nhật thông tin gói tập</h4>
-            <form class="forms-sample" id="formPackgeUpdate">
-                <input hidden id="tmpId" value="@_info.Id"/>
-                <div class="form-group">
-                    <label for="name">Tên gói<code>(*)</code></label>
-                    <input type="text" class="form-control" id="name" placeholder="Tên gói tập" value="@_info.Name">
+    <form id="formPackgeUpdate">
+        <div class="card">
+            <div class="card-body">
+                <div class="group">
+                    <div class="title-group">
+                        <h4 class="card-title ">Thông tin gói tập</h4>
+                        <hr>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Tên gói tập<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input type="text" id="name" placeholder="Tên gói tập" value="@_info.Name">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Giá<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input type="text" id="price" placeholder="Giá" value="@_info.Price">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Giảm giá (%):</div>
+                                        <div class="field-report">
+                                            <input type="text" id="discount" value="@(_info.Discount * 100)">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Mô tả:</div>
+                                        <div class="field-report">
+                                            <textarea id="description" style="height: 68px !important;" rows="3">@_info.Description</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="price">Giá<code>(*)</code></label>
-                    <input type="text" class="form-control" id="price" placeholder="Giá" value="@_info.Price">
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="footer-form">
+                            <button type="submit" class="btn btn-success px-5"><i class="bx bx-home mr-1"></i>Lưu</button>
+                            <button type="button" class="btn btn-danger px-5 ml-1" onclick="location.href = '/goi-tap/danh-sach';"><i class="bx bx-bookmark mr-1"></i>Thoát</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="discount">Giảm giá(đơn vị %)<code>(*)</code></label>
-                    <input type="text" class="form-control" id="discount" value="0" value="@_info.Discount">
-                </div>
-                <div class="form-group">
-                    <label for="description">Mô tả</label>
-                    <textarea class="form-control" id="description" rows="3" value="@_info.Description"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary me-2">Lưu</button>
-                <button class="btn btn-light" onclick="location.href = '/goi-tap/danh-sach';">Quay lại</button>
-            </form>
+
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 
 <script>

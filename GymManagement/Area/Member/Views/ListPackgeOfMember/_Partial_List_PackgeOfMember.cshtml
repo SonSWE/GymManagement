@@ -5,7 +5,7 @@
 }
 <h4 class="card-title">Kết quả tìm kiếm</h4>
 <div class="main-table-responsive">
-    <table>
+    <table style="width: 100%;">
         <thead>
             <tr>
                 <th>STT</th>
@@ -22,10 +22,10 @@
                 foreach (var item in _lstData)
                 {
                     <tr>
-                        <td  class="text-center">@item.STT</td>
+                        <td class="text-center">@item.STT</td>
                         <td>@item.PackgeName</td>
                         <td>@item.StatusText</td>
-                        @if( item.DaysLeft < 0)
+                        @if (item.DaysLeft < 0)
                         {
                             <td class="text-right">0</td>
                         }
@@ -33,7 +33,7 @@
                         {
                             <td class="text-right">@item.DaysLeft</td>
                         }
-                        @if( item.MonthsLeft < 0)
+                        @if (item.MonthsLeft < 0)
                         {
                             <td class="text-right">0</td>
                         }
@@ -52,18 +52,20 @@
                                 </div>
                             }
                             @*else if (@item.Status == MemberPackgeStatus.Khoa || @item.Status == MemberPackgeStatus.HoatDongGhiNo)
-                            {
+                                {
                                 <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon" onclick="location.href = '/goi-tap-cua-thanh-vien/hoan-thien-hoa-don/@item.Id'">
-                                    <i class="mdi mdi-border-color text-dark">Thanh toán</i>
+                                <i class="mdi mdi-border-color text-dark">Thanh toán</i>
                                 </button>
-                            }*@
+                                }*@
                         </td>
                     </tr>
                 }
             }
             else
             {
-                <tr>Không có dữ liện</tr>
+                <tr>
+                    <th>Khác hàng này chưa được đăng ký gói tập nào</th>
+                </tr>
             }
 
         </tbody>

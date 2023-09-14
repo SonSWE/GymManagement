@@ -193,7 +193,7 @@ namespace DataAccess
                     Direction = ParameterDirection.Input,
                     Value = _info.IdentityAddress
                 };
-                lstParam[10] = new SqlParameter("@p_identityDate", SqlDbType.NVarChar)
+                lstParam[10] = new SqlParameter("@p_identityDate", SqlDbType.Date)
                 {
                     Direction = ParameterDirection.Input,
                     Value = _info.IdentityDate
@@ -287,7 +287,7 @@ namespace DataAccess
                     Direction = ParameterDirection.Input,
                     Value = _info.IdentityAddress
                 };
-                lstParam[10] = new SqlParameter("@p_identityDate", SqlDbType.NVarChar)
+                lstParam[10] = new SqlParameter("@p_identityDate", SqlDbType.Date)
                 {
                     Direction = ParameterDirection.Input,
                     Value = _info.IdentityDate

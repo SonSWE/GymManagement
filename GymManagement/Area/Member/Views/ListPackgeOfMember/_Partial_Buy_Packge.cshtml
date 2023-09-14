@@ -575,6 +575,11 @@
             return false;
         }
 
+        if (!$("input[name='radio1']:checked").val()) {
+            ShowError("Bạn phải chọn phương thức thanh toán để tiếp tục!");
+            return false;
+        }
+
         return true;
     }
 </script>

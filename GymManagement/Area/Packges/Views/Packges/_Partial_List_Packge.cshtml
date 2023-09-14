@@ -1,17 +1,38 @@
-﻿@using ObjectInfo
+﻿@using DataAccess;
+@using ObjectInfo
 @using ConstData;
 @{
     List<PackgeInfo> _lstData = ViewBag.LstPackge != null ? ViewBag.LstPackge : new List<PackgeInfo>();
+    
+    DateTime _dateNow = DateTime.Now;
+
+    int _record_on_page = 10;
+    if (ViewBag.Record_On_Page != null)
+    {
+        _record_on_page = ViewBag.Record_On_Page;
+    }
 }
-<h4 class="card-title">Kết quả tìm kiếm</h4>
-<div class="table-responsive">
-    <table class="table table-hover">
+<div class="d-flex">
+    <h4 class="card-title">Kết quả tìm kiếm</h4>
+    <div class="show-record">
+        Hiển thị
+        <select onchange="onChange_Record_on_page()" id="cbo_record_on_page">
+            @foreach (var item in AllcodeDA.GetByCDNameCDType("DISPLAY", "RECORD_ON_PAGE"))
+            {
+                <option @(item.CDVal == _record_on_page.ToString() ? "selected" : "") value="@item.CDVal">@item.Content</option>
+            }
+        </select>
+        bản ghi
+    </div>
+</div>
+<div class="main-table-responsive">
+    <table>
         <thead>
             <tr>
                 <th>Tên</th>
                 <th>Mô tả</th>
                 <th>Giảm giá</th>
-                <th>Giá / 1 tháng</th>
+                <th>Giá/ 1 tháng</th>
                 <th>Chức năng</th>
             </tr>
         </thead>
@@ -23,18 +44,23 @@
                     <tr>
                         <td>@item.Name</td>
                         <td>@item.Description</td>
-                        <td>@item.Discount</td>
+                        <td>@(item.Discount * 100)%</td>
                         <td>@item.Price</td>
                         <td>
-                            <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon">
-                                <i class="mdi mdi-delete text-danger">Xóa</i>
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon" onclick="location.href = '/goi-tap/chi-tiet/@item.Id'">
-                                <i class="mdi mdi-file-find text-dark">Xem</i>
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon" onclick="location.href = '/goi-tap/cap-nhat/@item.Id'">
-                                <i class="mdi mdi-border-color text-dark">Sửa</i>
-                            </button>
+                            <div class="divButton">
+                                <button class="button-table" onclick="location.href = '/goi-tap/chi-tiet/@item.Id'">
+                                    <img src="/css/image/view.png" />
+                                </button>
+                                <div class="tooltip-table">Xem</div>
+                            </div>
+                            <div class="divButton">
+                                <button class="button-table" onclick="location.href = '/goi-tap/cap-nhat/@item.Id'"><img src="/css/image/edit.png" /></button>
+                                <div class="tooltip-table">Cập nhật</div>
+                            </div>
+                            <div class="divButton">
+                                <button class="button-table" onclick=""><img src="/css/image/delete.png" /></button>
+                                <div class="tooltip-table">Xóa</div>
+                            </div>
                         </td>
                     </tr>
                 }
@@ -49,3 +75,4 @@
         </tbody>
     </table>
 </div>
+

@@ -9,6 +9,7 @@ namespace ObjectInfo
     public class StaffInfo
     {
         public decimal Id { get; set; }
+        public string UserName { get; set; }
         public string Name { get; set; }
         public DateTime Birthday { get; set; }
         public string Address { get; set; }
