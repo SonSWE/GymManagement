@@ -14,7 +14,7 @@ namespace GymManagement.Area.Voucher.Controllers
         {
             try
             {
-                List<VoucherPackgeInfo> _lstData = ApiVoucher.Search("");
+                List<VoucherPackgeInfo> _lstData = VoucherPackgeDA.Search("");
                 ViewBag.LstData = _lstData;
 
             }
@@ -30,7 +30,7 @@ namespace GymManagement.Area.Voucher.Controllers
         {
             try
             {
-                List<VoucherPackgeInfo> _lstData = ApiVoucher.Search("");
+                List<VoucherPackgeInfo> _lstData = VoucherPackgeDA.Search(name);
                 ViewBag.LstData = _lstData;
             }
             catch (Exception ex)
@@ -94,7 +94,7 @@ namespace GymManagement.Area.Voucher.Controllers
         {
             try
             {
-
+                ViewBag.LstTypeMember = TypeMemberDA.GetAll();
             }
             catch (Exception ex)
             {
@@ -104,14 +104,21 @@ namespace GymManagement.Area.Voucher.Controllers
         }
 
         [Route("them-moi"), HttpPost]
-        public IActionResult DoInsert(VoucherPackgeInfo _info)
+        public IActionResult DoInsert([FromForm] VoucherPackgeInfo _info)
         {
             string _message = "Thêm mới thất bại!";
             decimal _result = -1;
             try
             {
-
-                _result = ApiVoucher.Insert(_info);
+                if(_info.OpenTime > DateTime.Now.Date)
+                {
+                    _info.Status = "P";
+                }
+                else
+                {
+                    _info.Status = "A";
+                }
+                _result = VoucherPackgeDA.Insert(_info);
                 if (_result > 0)
                 {
                     _message = "Thêm mới thành công!";

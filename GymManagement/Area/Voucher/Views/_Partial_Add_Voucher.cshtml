@@ -3,6 +3,7 @@
     ViewData["Title"] = "Thêm mới mã giảm giá";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
+    List<TypeMemberInfo> _lstTypeMember = ViewBag.LstTypeMember != null ? ViewBag.LstTypeMember : new TypeMemberInfo();
 }
 
 <style>
@@ -12,48 +13,125 @@
         margin: 0;
     }
 </style>
-
 <div class="row">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title">Thêm mới Mã giảm giá</h4>
-            <form class="forms-sample" id="formVoucherAdd">
-                <div class="form-group">
-                    <label for="exampleInputUsername1">Mã giảm giá: <code>(*)</code></label>
-                    <input type="text" class="form-control" id="txtVoucherCode" placeholder="Nhập mã giảm giá">
+    <form id="formVoucherAdd">
+        <div class="card">
+            <div class="card-body">
+                <div class="group">
+                    <div class="title-group">
+                        <h4 class="card-title ">Thông tin cá nhân</h4>
+                        <hr>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Voucher<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input name="Code" type="text" id="txtVoucherCode" placeholder="" oninput="this.value = this.value.toUpperCase()">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Loại giảm giá<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <select name="VoucherType" class="form-control" id="cboVoucherType">
+                                                <option value="0">Phần trăm</option>
+                                                <option value="1">Trừ tiền</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Mức giảm<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input name="Discount" type="number" id="txtDiscount" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Ngày bắt đầu<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input name="OpenTime" type="datetime-local" id="dpOpenDay" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Ngày kết thúc<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input name="CloseTime" type="datetime-local" id="dpCloseDay" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Loại khách hàng áp dụng<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <select name="ForMemberType" class="form-control" id="cboTypeMember">
+                                                @foreach (var item in _lstTypeMember)
+                                                {
+                                                    <option value="@item.Id">@item.Name</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Số tiền tối thiểu của hóa đơn:</div>
+                                        <div class="field-report">
+                                            <input name="MinTotalBill" type="number" id="txtMinTotal" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Số lượng<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <input name="Count" type="number" id="txtVoucherCount" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Mô tả<span class="clr-red">(*)</span>:</div>
+                                        <div class="field-report">
+                                            <textarea name="Description" id="txtDescription" rows="3" style="height: 68px !important;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="flex-report">
+                                        <div class="title-report">Ghi chú:</div>
+                                        <div class="field-report">
+                                            <input name="Note" type="text" id="txtNote" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="exampleFormControlSelect2">Loại mã giảm giá: <code>(*)</code></label>
-                    <select class="form-control" id="cboVoucherType">
-                            <option value="1">Phần trăm</option>
-                            <option value="2">Trừ tiền</option>
-                    </select>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="footer-form">
+                            <button type="submit" class="btn btn-success px-5"><i class="bx bx-home mr-1"></i>Thêm mới</button>
+                            <button type="button" class="btn btn-danger px-5 ml-1" onclick="history.back();"><i class="bx bx-bookmark mr-1"></i>Thoát</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="exampleInputConfirmPassword1">Giá trị giảm giá: <code>(*)</code></label>
-                    <input type="number" class="form-control" id="txtDiscount" placeholder="">
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputConfirmPassword1">Số lượng: <code>(*)</code></label>
-                    <input type="number" class="form-control" id="txtVoucherCount" placeholder="">
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputPassword1">Ngày hiệu lực: <code>(*)</code></label>
-                    <input type="date" class="form-control" id="dpOpenDay" placeholder="">
-                </div>
-                 <div class="form-group">
-                    <label for="exampleInputPassword1">Ngày hết hạn: <code>(*)</code></label>
-                    <input type="date" class="form-control" id="dpCloseDay" placeholder="">
-                </div>
-                <div class="form-group">
-                    <label for="description">Mô tả</label>
-                    <textarea class="form-control" id="txtDescription" rows="3"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary me-2">Lưu</button>
-                <button class="btn btn-light" onclick="history.back();">Quay lại</button>
-            </form>
+
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 
 <script>
@@ -64,34 +142,25 @@
             e.preventDefault();
 
             if (Validate()) {
-                var formData = new FormData(this);
-                formData.set("VoucherCode", $("#txtVoucherCode").val());
-                formData.set("VoucherType", $("#cboVoucherType").val());
-                formData.set("VoucherCount", $("#txtVoucherCount").val());
-                formData.set("Discount", $("#txtDiscount").val());
-                formData.set("OpenTime", $("#dpOpenDay").val());
-                formData.set("CloseTime", $("#dpCloseDay").val());
-                formData.set("Description", $('#txtDescription').val());
-
                 $.ajax({
                     type: 'POST',
                     enctype: "multipart/form-data",
                     url: '/ma-giam-gia/them-moi',
-                    data: formData,
+                    data: new FormData(this),
                     beforeSend: function () {
-
+                        SpinLoading(true);
                     },
                     contentType: false, processData: false,
                     success: function (data) {
                         if (data != null) {
-
-                            if(data.success > 0){
-                                alert(data.message);
+                            if (data.success > 0) {
+                                ShowSuccess(data.message);
                                 setTimeout(() => {
                                     window.location.href = "/ma-giam-gia/danh-sach";
                                 }, 1000);
-                            }else{
-                                alert(data.message);
+                            } else {
+                                SpinLoading(false);
+                                ShowError(data.message);
                             }
                         }
                     },
@@ -99,7 +168,7 @@
                         console.log(data);
                     },
                     complete: function () {
-
+                        SpinLoading(false);
                     }
                 });
             }
@@ -110,30 +179,70 @@
 
     function Validate() {
         if (!$("#txtVoucherCode").val().trim()) {
-            alert("Mã giảm giá không được để trống!");
+            ShowError("Mã giảm giá không được để trống!");
+            return false;
+        }
+        if (containsSpecialChars($("#txtVoucherCode").val().trim())) {
+            ShowError("Mã giảm giá không được chứa ký tự đặc biệt!");
+            return false;
+        }
+        if (containsUnicode($("#txtVoucherCode").val().trim())) {
+            ShowError("Mã giảm giá chứa dấu tiếng việt!");
             return false;
         }
         if (!$("#cboVoucherType").val().trim()) {
-            alert("Bạn phải chọn loại mã giảm giá!");
+            ShowError("Loại giảm giá không được để trống!");
             return false;
         }
-        if (!$("#txtDiscount").val()) {
-            alert("Giá trị giảm giá không được để trống");
+        if (!$("#txtDiscount").val().trim()) {
+            ShowError("Mức giảm không được để trống");
             return false;
         }
-        if (!$("#txtVoucherCount").val() || $("#txtVoucherCount").val() <= 0) {
-            alert("Số lượng không được để trống");
+        if (parseInt($("#txtDiscount").val().trim()) < 0) {
+            ShowError("Mức giảm phải lớn hơn 0");
             return false;
         }
         if (!$("#dpOpenDay").val().trim()) {
-            alert("Ngày hiệu lực không được để trống");
+            ShowError("Ngày giờ bắt đầu không được để trống");
             return false;
         }
         if (!$("#dpCloseDay").val().trim()) {
-            alert("Ngày hết hạn không được để chống");
+            ShowError("Ngày giờ kết thúc không được để trống");
+            return false;
+        }
+        if (!$("#cboTypeMember").val().trim()) {
+            ShowError("Loại khách hàng áp dụng không được để trống");
+            return false;
+        }
+        if ($("#txtMinTotal").val().trim()) {
+            if (parseInt($("#txtMinTotal").val().trim()) < 0) {
+                ShowError("Số tiền tối thiểu của hóa đơn phải lớn hơn 0");
+                return false;
+            }
+        }
+        if (!$("#txtVoucherCount").val()) {
+            ShowError("Số lượng không được để trống");
+            return false;
+        }
+        if (parseInt($("#txtVoucherCount").val().trim()) < 0) {
+            ShowError("Số lượng phải lớn hơn 0");
+            return false;
+        }
+        if (!$("#txtDescription").val().trim()) {
+            ShowError("Mô tả không được để trống");
             return false;
         }
 
         return true;
+    }
+
+    function containsSpecialChars(str) {
+        const specialChars = /[`!@@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+        return specialChars.test(str);
+    }
+
+    function containsUnicode(str) {
+        const rg = /^[\x20-\x7E]*$/;
+        return !rg.test(str);
     }
 </script>

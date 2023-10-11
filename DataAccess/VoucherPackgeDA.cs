@@ -24,11 +24,17 @@ namespace DataAccess
                     string query = "";
                     if (name != null && name != "")
                     {
-                        query = "SELECT m.* FROM VoucherPackge m WHERE m.VoucherCode like N'%" + name + "%' or m.VoucherCode like '%" + name + "%'";
+                        query = "SELECT m.*, al1.Content Status_Text, al2.Content VoucherType_Text FROM VoucherPackge m " +
+                            "LEFT JOIN AllCode al1 ON al1.CDName = 'VOUCHER' AND al1.CDType = 'STATUS' AND al1.CDVal = m.Status " +
+                            "LEFT JOIN AllCode al2 ON al2.CDName = 'VOUCHER' AND al2.CDType = 'VOUCHERTYPE' AND al2.CDVal = m.VoucherType " +
+                            "WHERE m.deleted = 0 and m.VoucherCode like N'%" + name + "%' or m.VoucherCode like '%" + name + "%'";
                     }
                     else
                     {
-                        query = "SELECT m.* FROM VoucherPackge m ";
+                        query = "SELECT m.*, al1.Content Status_Text, al2.Content VoucherType_Text FROM VoucherPackge m " +
+                            "LEFT JOIN AllCode al1 ON al1.CDName = 'VOUCHER' AND al1.CDType = 'STATUS' AND al1.CDVal = m.Status " +
+                            "LEFT JOIN AllCode al2 ON al2.CDName = 'VOUCHER' AND al2.CDType = 'VOUCHERTYPE' AND al2.CDVal = m.VoucherType " +
+                            "WHERE m.deleted = 0";
                     }
 
                     con.Open();
@@ -74,8 +80,8 @@ namespace DataAccess
                 using (SqlConnection con = new SqlConnection(CommonData.connectionString))
                 {
                     con.Open();
-                    string query = "INSERT INTO VoucherPackge (VoucherCode,Discount, VoucherCount, CloseTime, OpenTime, Status, VoucherType, Description)"
-                        + $"VALUES(N'{_info.Code}',{_info.Discount},{_info.Count}, '{_info.CloseTime.ToString("yyyy-MM-dd")}','{_info.OpenTime.ToString("yyyy-MM-dd")}',{_info.Status},{_info.VoucherType},'{_info.Description}');";
+                    string query = "INSERT INTO VoucherPackge (Code,Discount, Count, CloseTime, OpenTime, Status, VoucherType, Description)"
+                        + $"VALUES(N'{_info.Code}',{_info.Discount},{_info.Count}, '{_info.CloseTime.ToString("yyyy-MM-dd")}','{_info.OpenTime.ToString("yyyy-MM-dd")}',N'{_info.Status}',{_info.VoucherType},'{_info.Description}');";
                     result = SqlHelper.ExecuteNonQuery(con, CommandType.Text, query);
                     con.Close();
                     return result;

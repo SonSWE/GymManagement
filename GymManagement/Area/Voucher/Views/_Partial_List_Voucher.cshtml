@@ -4,8 +4,8 @@
     List<VoucherPackgeInfo> _lstData = ViewBag.LstData != null ? ViewBag.LstData : new List<VoucherPackgeInfo>();
 }
 <h4 class="card-title">Kết quả tìm kiếm</h4>
-<div class="table-responsive">
-    <table class="table table-hover">
+<div class="main-table-responsive">
+    <table>
         <thead>
             <tr>
                 <th>Mã giảm giá</th>
@@ -25,15 +25,13 @@
                 {
                     <tr>
                         <td>@item.Code</td>
-                        
+                        <td>@item.VoucherType_Text</td>
                         @if(item.VoucherType == VoucherType.PhanTram)
                         {
-                            <td>Phần trăm</td>
                             <td>@item.Discount %</td>
                         }
                         else if(item.VoucherType == VoucherType.Tien)
                         {
-                            <td>Trừ tiền trực tiếp</td>
                             <td>@item.Discount.ToString("#,##0") đ</td>
                         }
                         else
@@ -44,22 +42,15 @@
                         <td>@item.Count</td>
                         <td>@item.OpenTime.ToString("dd/MM/yyy HH:mm")</td>
                         <td>@item.CloseTime.ToString("dd/MM/yyy HH:mm")</td>
-                        
-                        @if(item.Status == VoucherStatus.HieuLuc)
-                        {
-                            <td>Hiệu lực</td>
-                        }
-                        else if(item.Status == VoucherStatus.HetHieuLuc)
-                        {
-                            <td>Hết hiệu lực</td>
-                        }
-                        else if(item.Status == VoucherStatus.HetLuot)
-                        {
-                            <td>Hết lượt sử dụng</td>
-                        }
-
+                        <td>@item.Status_Text</td>
                         <td>
-                            <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon">
+                            <div class="divButton">
+                                <button class="button-table" onclick="location.href = '/ma-giam-gia/chi-tiet/@item.Code'">
+                                    <img src="/css/image/view.png" />
+                                </button>
+                                <div class="tooltip-table">Xem</div>
+                            </div>
+                            @* <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon">
                                 <i class="mdi mdi-delete text-danger">Xóa</i>
                             </button>
                             <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon" onclick="location.href = '/ma-giam-gia/chi-tiet/@item.Code'">
@@ -67,7 +58,7 @@
                             </button>
                             <button type="button" class="btn btn-outline-secondary btn-rounded btn-icon" onclick="location.href = '/ma-giam-gia/cap-nhat/@item.Code'">
                                 <i class="mdi mdi-border-color text-dark">Sửa</i>
-                            </button>
+                            </button> *@
                         </td>
                     </tr>
                 }
