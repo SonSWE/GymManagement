@@ -58,7 +58,7 @@
                         </div>
                     </div>
                 </div>
-               
+
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="footer-form">
@@ -75,27 +75,27 @@
 
 <script>
 
-    $("#price").on("input", function(){
-        try{
+    $("#price").on("input", function () {
+        try {
             var value = parseInt($(this).val());
-            if(value <= 0){
+            if (value <= 0) {
                 alert('giá phải lớn hơn 0!');
                 return;
             }
-        }catch(e){
+        } catch (e) {
             alert('giá phải là số nguyên!');
             return;
         }
     });
 
-    $("#discount").on("input", function(){
-        try{
+    $("#discount").on("input", function () {
+        try {
             var value = parseInt($(this).val());
-            if(value <= 0){
+            if (value <= 0) {
                 alert('Phần trăm giảm giá phải lớn hơn 0!');
                 return;
             }
-        }catch(e){
+        } catch (e) {
             alert('Phần trăm giảm giá là số nguyên!');
             return;
         }
@@ -107,46 +107,39 @@
             e.preventDefault();
 
             if (Validate()) {
-                var formData = new FormData(this);
-                formData.set("Name", $("#name").val());
-                formData.set("Description", $("#description").val());
-                formData.set("Discount", parseInt($("#discount").val()) / 100);
-                formData.set("Price", $("#price").val());
-               
                 $.ajax({
                     type: 'POST',
                     enctype: "multipart/form-data",
                     url: '/goi-tap/them-moi',
-                    data: formData,
+                    data: new FormData(this),
                     beforeSend: function () {
                         SpinLoading(true);
                     },
                     contentType: false, processData: false,
                     success: function (data) {
-                        SpinLoading(false);
-                        if (data != null) {
-                            if(data.success > 0){
-                                ShowSuccess(data.message);
-                                setTimeout(() => {
-                                    window.location.href = "/goi-tap/danh-sach";
-                                }, 2000);
-                            }else{
-                                ShowError(data.message);
-                            }
+                        if (data != null && data.success > 0) {
+                            ShowSuccess(data.message);
+                            setTimeout(() => {
+                                window.location.href = "/goi-tap/danh-sach";
+                            }, 2000);
+                            SpinLoading(false);
+                        } else {
+                            ShowError(data.message);
                         }
-                    },
+                    }
+                },
                     error: function (data) {
                         console.log(data);
                     },
                     complete: function () {
                         SpinLoading(false);
                     }
-                });
+                    });
+                }
+            } catch (ex) {
+                console.log(ex);
             }
-        } catch (ex) {
-            console.log(ex);
-        }
-    });
+        });
 
     function Validate() {
         if (!$("#name").val().trim()) {

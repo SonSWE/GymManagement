@@ -152,16 +152,14 @@
                     },
                     contentType: false, processData: false,
                     success: function (data) {
-                        if (data != null) {
-                            if (data.success > 0) {
-                                ShowSuccess(data.message);
-                                setTimeout(() => {
-                                    window.location.href = "/ma-giam-gia/danh-sach";
-                                }, 1000);
-                            } else {
-                                SpinLoading(false);
-                                ShowError(data.message);
-                            }
+                        if (data != null && data.success > 0) {
+                            ShowSuccess(data.message);
+                            setTimeout(() => {
+                                window.location.href = "/ma-giam-gia/danh-sach";
+                            }, 1000);
+                        } else {
+                            SpinLoading(false);
+                            ShowError(data.message);
                         }
                     },
                     error: function (data) {
