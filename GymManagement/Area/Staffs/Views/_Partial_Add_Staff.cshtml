@@ -11,7 +11,7 @@
                 <div class="group">
                     <div class="title-group">
                         <h4 class="card-title ">Thông tin cá nhân</h4>
-                        <hr >
+                        <hr>
                     </div>
                     <div class="row">
                         <div class="col-lg-6">
@@ -75,7 +75,7 @@
                         </div>
                     </div>
                 </div>
-             
+
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="footer-form">
@@ -97,49 +97,40 @@
             e.preventDefault();
 
             if (Validate()) {
-                var formData = new FormData(this);
-                formData.set("Name", $("#staffName").val());
-                formData.set("Birthday", $("#dpBirthday").val());
-                formData.set("Address", $("#address").val());
-                formData.set("Sex", $("#sex").val());
-                formData.set("Phone", $("#phone").val());
-                formData.set("IdentityCard", $('#identity').val());
-
                 $.ajax({
                     type: 'POST',
                     enctype: "multipart/form-data",
                     url: '/nhan-vien/them-moi',
-                    data: formData,
+                    data: new FormData(this),
                     beforeSend: function () {
                         SpinLoading(true);
                     },
                     contentType: false, processData: false,
                     success: function (data) {
-                        if (data != null) {
-
-                            if(data.success > 0){
-                                ShowSuccess(data.message);
-                                setTimeout(() => {
-                                    window.location.href = "/nhan-vien/danh-sach";
-                                }, 2000);
-                            }else{
-                                SpinLoading(false);
-                                ShowError(data.message);
-                            }
+                        if (data != null && data.success > 0) {
+                            SpinLoading(false);
+                            ShowSuccess(data.message);
+                            setTimeout(() => {
+                                window.location.href = "/nhan-vien/danh-sach";
+                            }, 2000);
+                        } else {
+                            SpinLoading(false);
+                            ShowError(data.message);
                         }
-                    },
+                    }
+                },
                     error: function (data) {
                         console.log(data);
                     },
                     complete: function () {
 
                     }
-                });
-            }
-        } catch (ex) {
-            console.log(ex);
-        }
-    });
+                    });
+                }
+            } catch (ex) {
+        console.log(ex);
+    }
+        });
 
     function Validate() {
         if (!$("#staffName").val().trim()) {
