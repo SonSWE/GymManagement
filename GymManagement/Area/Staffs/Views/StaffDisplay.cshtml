@@ -36,6 +36,33 @@
         </div>
     </div>
 </div>
+
+<div id="myModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="e1_14">
+            <div class="e1_15">
+                <span class="e1_16">Cảnh báo</span>
+                <div class="e1_17"></div>
+            </div>
+            <span class="close" onclick="HideModal()">&times;</span>
+        </div>
+        <div class="pb-text">
+            <span class="e1_18">Bạn có chắc chắn muốn xóa thông tin nhân viên này?</span>
+
+        </div>
+
+        <div class="button-container">
+            <button type="button" class="btn btn-primary confirm-btn " onclick="deleteMember()">Đồng ý</button>
+            <div class="temp">
+                <input type="hidden" id="tmpId" />
+            </div>
+            <button type="button" class="btn btn-secondary cancel-btn" onclick="HideModal()">Hủy</button>
+
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).on('keypress', function (e) {
         if (e.which == 13) {
@@ -43,17 +70,16 @@
         }
     });
 
-    function Search()
-    {
+    function Search() {
         keySearch = $('#searchName').val().trim();
         $.ajax({
             type: "get",
             url: "/nhan-vien/tim-kiem",
-            data:{
+            data: {
                 name: keySearch
             },
             beforeSend: function () {
-                      SpinLoading(true);
+                SpinLoading(true);
             },
             success: function (data) {
                 if (data != null) {
@@ -64,7 +90,50 @@
                 console.log(data);
             },
             complete: function () {
-                           SpinLoading(false);
+                SpinLoading(false);
+            }
+        });
+    }
+
+    function ShowDelete(id) {
+        $("#myModal").show();
+
+        $('#tmpId').val(id);
+    }
+
+    function HideModal() {
+        $("#myModal").hide();
+    }
+
+    function Delete_Data() {
+        $.ajax({
+            type: "POST",
+            url: "/nhan-vien/xoa",
+            data: {
+                id: $('#tmpId').val()
+            },
+            beforeSend: function () {
+                SpinLoading(true);
+            },
+            success: function (data) {
+                if (data != null && data.success > 0) {
+                    ShowSuccess(data.message);
+
+                    setTimeout(() => {
+                        $("#myModal").hide();
+
+                        Search(1);
+                    }, 1000);
+                } else {
+                    SpinLoading(false);
+                    alert(data.message);
+                }
+            },
+            error: function (data) {
+                console.log(data);
+            },
+            complete: function () {
+                SpinLoading(false);
             }
         });
     }

@@ -291,16 +291,16 @@
                             <p id="txtTotalPrice"></p>
                         </div>
                         @*<div class="d-flex align-items-center justify-content-between mb-2">
-                            <p style="width: 300px">Tiền khách trả (đ)<code>(*)</code></p>
-                            <p id="">
-                            <input type="number" class="form-control" id="txtCash" placeholder="" value="0"
-                            onblur="onChangeGhiNo();">
-                            </p>
-                            </div>*@
+                        <p style="width: 300px">Tiền khách trả (đ)<code>(*)</code></p>
+                        <p id="">
+                        <input type="number" class="form-control" id="txtCash" placeholder="" value="0"
+                        onblur="onChangeGhiNo();">
+                        </p>
+                        </div>*@
                         @*<div class="d-flex align-items-center justify-content-between mb-2">
-                            <p>Ghi nợ (đ)</p>
-                            <p id="txtDebit"></p>
-                            </div>*@
+                        <p>Ghi nợ (đ)</p>
+                        <p id="txtDebit"></p>
+                        </div>*@
                     </div>
 
                     <div class="border-bottom"></div>
@@ -343,31 +343,31 @@
 </div>
 
 <script>
-    function GoCancel(){
+    function GoCancel() {
         window.history.back();
     }
 
     $(document).ready(function () {
-        if($('#txtCountPackge').val() <= 0 && @page_type == 1){
+        if ($('#txtCountPackge').val() <= 0 && @page_type == 1) {
             $("#myModal").show();
         }
         onChangePackge();
     });
 
     function handleTotal() {
-        let _discountByVoucher = $('#txtDiscountByVoucher').text() == '0' ? '' : parseInt($('#txtDiscountByVoucher').text().text().replace(' ₫','').replace(',',''));
+        let _discountByVoucher = $('#txtDiscountByVoucher').text() == '0' ? '' : parseInt($('#txtDiscountByVoucher').text().text().replace(' ₫', '').replace(',', ''));
         //tính giảm giá của thành viên
         let _discountByMember = $('#txtTotalByPackge').val() * ($('#txtMemberDiscount').val() / 100);
         $('#txtDiscountByMember').text('');
         $('#txtDiscountByMember').text(formatCurrency(_discountByMember));
 
         //tính tổng giảm giá
-        let _sumDiscount = _discountByVoucher + parseInt($('#txtDiscountByMember').text().replace(' ₫','').replace(',',''));
+        let _sumDiscount = _discountByVoucher + parseInt($('#txtDiscountByMember').text().replace(' ₫', '').replace(',', ''));
         $('#txtTotalDiscount').text('');
         $('#txtTotalDiscount').text(formatCurrency(_sumDiscount));
 
         //tính thành tiền
-        let _totalPrice = $('#txtTotalByPackge').val() - parseInt($('#txtTotalDiscount').text().replace(' ₫','').replace(',',''));
+        let _totalPrice = $('#txtTotalByPackge').val() - parseInt($('#txtTotalDiscount').text().replace(' ₫', '').replace(',', ''));
         $('#txtTotalPrice').text('');
         $('#txtTotalPrice').text(formatCurrency(_totalPrice));
     }
@@ -426,10 +426,10 @@
                     code: $('#txtVoucherCode').val()
                 },
                 success: function (data) {
-                    if (data.success > 0 && data.jsonData != null) {
+                    if (data != null && data.success > 0 && data.jsonData != null) {
                         var _voucher = JSON.parse(data.jsonData);
 
-                        if(_voucher != null){
+                        if (_voucher != null) {
                             console.log(_voucher);
                             if (_voucher.Id > 0 && _voucher.Count > 0 && _voucher.Status == '@VoucherStatus.HieuLuc') {
                                 $('#txtVourcherContent').text(_voucher.Description);
@@ -450,7 +450,7 @@
                                 $('#txtVourcherContent').text();
                                 ShowError('Mã giảm giá không tồn tại hoặc đã hết lượt/hạn sử dụng!');
                             }
-                        }else{
+                        } else {
                             $('#txtVourcherContent').text();
                             ShowError('Mã giảm giá không tồn tại!');
                         }
@@ -479,7 +479,7 @@
                 var formData = new FormData(this);
 
                 //formData.set("Cash", $('#txtCash').val());
-                formData.set("Discount", parseInt($('#txtTotalDiscount').text().replace(' ₫','').replace(',','')));
+                formData.set("Discount", parseInt($('#txtTotalDiscount').text().replace(' ₫', '').replace(',', '')));
 
                 formData.set("Total", $('#txtTotalByPackge').val());
                 //if( parseInt($('#txtDebit').text()) > 0){
@@ -509,28 +509,26 @@
                     },
                     contentType: false, processData: false,
                     success: function (data) {
-                        if (data != null) {
-                            if (data.success > 0) {
-                                if (data.invoiceTemp != null) {
-                                    var mode = 'iframe'; //popup
-                                    var extraCss = '';
-                                    var keepAttr = ['class', 'id', 'style', 'on'];
-                                    var headElements = '<meta charset="utf-8" />,<meta http-equiv="X-UA-Compatible" content="IE=edge"/>';
-                                    var options = { mode: mode, extraCss: extraCss, retainAttr: keepAttr, extraHead: headElements };
+                        if (data != null && data.success > 0) {
+                            if (data.invoiceTemp != null) {
+                                var mode = 'iframe'; //popup
+                                var extraCss = '';
+                                var keepAttr = ['class', 'id', 'style', 'on'];
+                                var headElements = '<meta charset="utf-8" />,<meta http-equiv="X-UA-Compatible" content="IE=edge"/>';
+                                var options = { mode: mode, extraCss: extraCss, retainAttr: keepAttr, extraHead: headElements };
 
-                                    printArea(data.invoiceTemp, options);
-                                }
-
-                                ShowSuccess(data.message);
-
-                                setTimeout(() => {
-                                    window.location.href = "/khach-hang/danh-sach";
-                                    window.history.back();
-                                }, 2000);
-                            } else {
-                                ShowError(data.message);
-                                SpinLoading(false);
+                                printArea(data.invoiceTemp, options);
                             }
+
+                            ShowSuccess(data.message);
+
+                            setTimeout(() => {
+                                window.location.href = "/khach-hang/danh-sach";
+                                window.history.back();
+                            }, 2000);
+                        } else {
+                            ShowError(data.message);
+                            SpinLoading(false);
                         }
                     },
                     error: function (data) {

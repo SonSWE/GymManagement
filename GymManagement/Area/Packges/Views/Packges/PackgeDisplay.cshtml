@@ -48,6 +48,33 @@
         </div>
     </div>
 </div>
+
+<div id="myModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="e1_14">
+            <div class="e1_15">
+                <span class="e1_16">Cảnh báo</span>
+                <div class="e1_17"></div>
+            </div>
+            <span class="close" onclick="HideModal()">&times;</span>
+        </div>
+        <div class="pb-text">
+            <span class="e1_18">Bạn có chắc chắn muốn xóa thông tin gói tập này?</span>
+
+        </div>
+
+        <div class="button-container">
+            <button type="button" class="btn btn-primary confirm-btn " onclick="deleteMember()">Đồng ý</button>
+            <div class="temp">
+                <input type="hidden" id="tmpId" />
+            </div>
+            <button type="button" class="btn btn-secondary cancel-btn" onclick="HideModal()">Hủy</button>
+
+        </div>
+    </div>
+</div>
+
 <script>
     function onChange_Record_on_page() {
         Search(1);
@@ -75,6 +102,49 @@
             },
             complete: function () {
                            SpinLoading(false);
+            }
+        });
+    }
+
+    function ShowDelete(id) {
+        $("#myModal").show();
+
+        $('#tmpId').val(id);
+    }
+
+    function HideModal() {
+        $("#myModal").hide();
+    }
+
+    function Delete_Data() {
+        $.ajax({
+            type: "POST",
+            url: "/goi-tap/xoa",
+            data: {
+                id: $('#tmpId').val()
+            },
+            beforeSend: function () {
+                SpinLoading(true);
+            },
+            success: function (data) {
+                if (data != null && data.success > 0) {
+                    ShowSuccess(data.message);
+
+                    setTimeout(() => {
+                        $("#myModal").hide();
+
+                        Search(1);
+                    }, 1000);
+                } else {
+                    SpinLoading(false);
+                    alert(data.message);
+                }
+            },
+            error: function (data) {
+                console.log(data);
+            },
+            complete: function () {
+                SpinLoading(false);
             }
         });
     }
