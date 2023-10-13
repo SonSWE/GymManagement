@@ -17,16 +17,16 @@
                 <div class="group">
                     <div class="title-group">
                         <h4 class="card-title ">Thông tin cá nhân</h4>
-                        <hr >
+                        <hr>
                     </div>
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="flex-report">
                                 <div class="title-report">Ảnh đại diện<span class="clr-red">(*)</span>:</div>
                                 <div class="field-report">
-                                    <div class="avatar" >
+                                    <div class="avatar">
                                         <input type="file" id="avatar" style="display: inline-block; width: 60%">
-                                        <img id="preview_avt" style=" width: inherit;"/>
+                                        <img id="preview_avt" style=" width: inherit;" />
                                     </div>
                                 </div>
                             </div>
@@ -37,7 +37,7 @@
                                     <div class="flex-report">
                                         <div class="title-report">Họ và tên<span class="clr-red">(*)</span>:</div>
                                         <div class="field-report">
-                                            <input type="text" id="txtName" autocomplete="off" >
+                                            <input type="text" id="txtName" autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
@@ -46,7 +46,7 @@
                                     <div class="flex-report">
                                         <div class="title-report">Ngày sinh<span class="clr-red">(*)</span>:</div>
                                         <div class="field-report">
-                                            <input type="date" id="txtBirthday" autocomplete="off" >
+                                            <input type="date" id="txtBirthday" autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
@@ -55,7 +55,7 @@
                                     <div class="flex-report">
                                         <div class="title-report">Số CCCD<span class="clr-red">(*)</span>:</div>
                                         <div class="field-report">
-                                            <input type="text" id="txtIdentity" autocomplete="off" >
+                                            <input type="text" id="txtIdentity" autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
@@ -64,7 +64,7 @@
                                     <div class="flex-report">
                                         <div class="title-report">Nơi cấp CCCD<span class="clr-red">(*)</span>:</div>
                                         <div class="field-report">
-                                            <input type="text" id="txtIdentityAddress" autocomplete="off" >
+                                            <input type="text" id="txtIdentityAddress" autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
@@ -93,7 +93,7 @@
                                     <div class="flex-report" style="align-items: flex-start;">
                                         <div class="title-report">Địa chỉ<span class="clr-red">(*)</span>:</div>
                                         <div class="field-report">
-                                            <textarea id="txtAddress" autocomplete="off"  style="height: 68px !important;"></textarea>
+                                            <textarea id="txtAddress" autocomplete="off" style="height: 68px !important;"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -102,7 +102,7 @@
                                     <div class="flex-report">
                                         <div class="title-report">Ngày cấp CCCD<span class="clr-red">(*)</span>:</div>
                                         <div class="field-report">
-                                            <input type="date" id="txtIdentityDate" autocomplete="off" >
+                                            <input type="date" id="txtIdentityDate" autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
@@ -113,7 +113,7 @@
                 <div class="group">
                     <div class="title-group">
                         <h4 class="card-title ">Thông tin liên hệ</h4>
-                        <hr >
+                        <hr>
                     </div>
                     <div class="row">
                         <div class="col-lg-6">
@@ -122,7 +122,7 @@
                                     <div class="flex-report">
                                         <div class="title-report">Số điện thoại<span class="clr-red">(*)</span>:</div>
                                         <div class="field-report">
-                                            <input type="text" id="txtPhone" autocomplete="off" >
+                                            <input type="text" id="txtPhone" autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
@@ -135,7 +135,7 @@
                                     <div class="flex-report">
                                         <div class="title-report">Email:</div>
                                         <div class="field-report">
-                                            <input type="text" id="txtEmail" autocomplete="off" >
+                                            <input type="text" id="txtEmail" autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
@@ -147,7 +147,7 @@
                 <div class="group">
                     <div class="title-group">
                         <h4 class="card-title ">Thông tin khác</h4>
-                        <hr >
+                        <hr>
                     </div>
                     <div class="row">
                         <div class="col-lg-6">
@@ -175,7 +175,7 @@
                     <div class="col-lg-12">
                         <div class="footer-form">
                             <button type="submit" class="btn btn-success px-5"><i class="bx bx-home mr-1"></i>Thêm mới</button>
-                            <button type="button" class="btn btn-danger px-5 ml-1"  onclick="cancel();"><i class="bx bx-bookmark mr-1"></i>Thoát</button>
+                            <button type="button" class="btn btn-danger px-5 ml-1" onclick="cancel();"><i class="bx bx-bookmark mr-1"></i>Thoát</button>
                         </div>
                     </div>
                 </div>
@@ -210,23 +210,23 @@
 
 <script>
     let isChange = false;
-    $('input, select, textarea').change(function() {
+    $('input, select, textarea').change(function () {
         isChange = true;
-      });
-    function cancel(){
-        if(isChange){
+    });
+    function cancel() {
+        if (isChange) {
             $("#myModal").show();
         }
-        else{
+        else {
             window.history.back();
         }
     }
 
-    function GoCancel(){
+    function GoCancel() {
         window.history.back();
     }
 
-    function HideModal(){
+    function HideModal() {
         $("#myModal").hide();
     }
 
@@ -265,17 +265,15 @@
                     },
                     contentType: false, processData: false,
                     success: function (data) {
-                        if (data != null) {
-                            if(data.success > 0){
-                                ShowSuccess(data.message);
+                        if (data != null && data.success > 0) {
+                            ShowSuccess(data.message);
 
-                                setTimeout(() => {
-                                    window.location.href = "/khach-hang/danh-sach";
-                                }, 1000);
-                            }else{
-                                SpinLoading(false);
-                                ShowError(data.message);
-                            }
+                            setTimeout(() => {
+                                window.location.href = "/khach-hang/danh-sach";
+                            }, 1000);
+                        } else {
+                            SpinLoading(false);
+                            ShowError(data.message);
                         }
                     },
                     error: function (data) {
@@ -291,58 +289,58 @@
         }
     });
 
-    $('#avatar').on('change', function(e) {
+    $('#avatar').on('change', function (e) {
         const file = this.files[0];
-        
-        if (file){
-          let reader = new FileReader();
-          reader.onload = function(event){
-            $('#preview_avt').attr('src', event.target.result);
-          }
-          reader.readAsDataURL(file);
+
+        if (file) {
+            let reader = new FileReader();
+            reader.onload = function (event) {
+                $('#preview_avt').attr('src', event.target.result);
+            }
+            reader.readAsDataURL(file);
         }
     });
 
     function Validate() {
-        if (!$('#avatar').prop('files')[0]){
+        if (!$('#avatar').prop('files')[0]) {
             ShowError("Bạn phải chọn ảnh đại diện");
             return false;
         }
 
-        if (!$('#txtName').val()){
+        if (!$('#txtName').val()) {
             ShowError("Họ và tên không được để trống");
             return false;
         }
 
-        if (!$('#slSex').val()){
+        if (!$('#slSex').val()) {
             ShowError("Giới tính không được để trống");
             return false;
         }
-        if (!$('#txtBirthday').val()){
+        if (!$('#txtBirthday').val()) {
             ShowError("Ngày sinh không được để trống");
             return false;
         }
-        if (!$('#txtAddress').val()){
+        if (!$('#txtAddress').val()) {
             ShowError("Địa chỉ không được để trống");
             return false;
         }
-        if (!$('#txtIdentity').val()){
+        if (!$('#txtIdentity').val()) {
             ShowError("Số CCCD không được để trống");
             return false;
         }
-        if (!$('#txtIdentityAddress').val()){
+        if (!$('#txtIdentityAddress').val()) {
             ShowError("Nơi cấp CCCD không được để trống");
             return false;
         }
-        if (!$('#txtIdentityDate').val()){
+        if (!$('#txtIdentityDate').val()) {
             ShowError("Ngày cấp CCCD không được để trống");
             return false;
         }
-        if (!$('#txtPhone').val()){
+        if (!$('#txtPhone').val()) {
             ShowError("Số điện thoại không được để trống");
             return false;
         }
-        if (!$('#slStatus').val()){
+        if (!$('#slStatus').val()) {
             ShowError("Trạng thái không được để trống");
             return false;
         }
