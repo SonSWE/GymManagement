@@ -143,18 +143,45 @@
 
     function Validate() {
         if (!$("#name").val().trim()) {
-            alert("Tên không được để trống!");
+            ShowError("Tên gói tập không được để trống!");
             return false;
         }
-        if (!$("#price").val()) {
-            alert("Giá không được để trống!");
+        if (!$("#ptname").val().trim()) {
+            ShowError("Tên PT không được để trống!");
+            return false;
+        }
+        if (!$("#priceOfMonth").val().trim()) {
+            ShowError("Giá trên tháng không được để trống!");
+            return false;
+        }
+        if (!$("#status").val().trim()) {
+            ShowError("Trạng thái không được để trống!");
+            return false;
+        }
+        if (!$("#typeDiscount").val().trim()) {
+            ShowError("Loại giảm giá không được để trống!");
             return false;
         }
         if (!$("#discount").val().trim()) {
-            alert("Giảm giá không được để trống!");
+            ShowError("Giá trị giảm giá không được để trống!");
             return false;
         }
-
+        if (parseInt($("#discount").val().trim()) < 0) {
+            ShowError("Giá trị giảm giá phải là số lớn hơn hoặc bằng 0!");
+            return false;
+        }
+        if (!$("#dpOpenDay").val().trim()) {
+            ShowError("Ngày bắt đầu giảm giá không được để trống!");
+            return false;
+        }
+        if (!$("#dpCloseDay").val().trim()) {
+            ShowError("Ngày bắt đầu giảm giá không được để trước ngày hiện tại!");
+            return false;
+        }
+        if (!CompareDate($("#dpOpenDay").val().trim(), $("#dpCloseDay").val().trim())) {
+            ShowError("Ngày kết thúc giảm giá không được để trống!");
+            return false;
+        }
         return true;
     }
 </script>

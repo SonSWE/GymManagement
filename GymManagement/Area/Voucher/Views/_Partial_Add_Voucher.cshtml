@@ -177,60 +177,67 @@
 
     function Validate() {
         if (!$("#txtVoucherCode").val().trim()) {
-            ShowError("Mã giảm giá không được để trống!");
+            ShowError("Voucher không được bỏ trống!");
             return false;
         }
-        if (containsSpecialChars($("#txtVoucherCode").val().trim())) {
-            ShowError("Mã giảm giá không được chứa ký tự đặc biệt!");
+        if (containsSpecialChars($("#txtVoucherCode").val().trim()) & containsUnicode($("#txtVoucherCode").val().trim())) {
+            ShowError("Voucher phải là ký tự từ a đến z!");
             return false;
         }
-        if (containsUnicode($("#txtVoucherCode").val().trim())) {
-            ShowError("Mã giảm giá chứa dấu tiếng việt!");
+        if (isAdded($("#txtVoucherCode").val().trim()) {
+            ShowError("Voucher đã tồn tại trong hệ thống!");
             return false;
         }
         if (!$("#cboVoucherType").val().trim()) {
-            ShowError("Loại giảm giá không được để trống!");
+            ShowError("Loại mã giảm giá không được bỏ trống!");
             return false;
         }
         if (!$("#txtDiscount").val().trim()) {
-            ShowError("Mức giảm không được để trống");
+            ShowError("Mức giảm không được bỏ trống!");
             return false;
         }
         if (parseInt($("#txtDiscount").val().trim()) < 0) {
-            ShowError("Mức giảm phải lớn hơn 0");
+            ShowError("Mức giảm phải lớn hơn 0!");
             return false;
         }
         if (!$("#dpOpenDay").val().trim()) {
-            ShowError("Ngày giờ bắt đầu không được để trống");
+            ShowError("Ngày giờ bắt đầu không được bỏ trống!");
             return false;
         }
         if (!$("#dpCloseDay").val().trim()) {
-            ShowError("Ngày giờ kết thúc không được để trống");
+            ShowError("Ngày giờ kết thúc không được bỏ trống!");
+            return false;
+        }
+        if (!CompareDate($("#dpOpenDay").val().trim(), $("#dpCloseDay").val().trim())) {
+            ShowError("Ngày giờ kết thúc không được nhỏ hơn ngày giờ bắt đầu!");
             return false;
         }
         if (!$("#cboTypeMember").val().trim()) {
-            ShowError("Loại khách hàng áp dụng không được để trống");
+            ShowError("Loại khách hàng áp dụng không được bỏ trống!");
             return false;
         }
-        if ($("#txtMinTotal").val().trim()) {
-            if (parseInt($("#txtMinTotal").val().trim()) < 0) {
-                ShowError("Số tiền tối thiểu của hóa đơn phải lớn hơn 0");
-                return false;
-            }
-        }
-        if (!$("#txtVoucherCount").val()) {
-            ShowError("Số lượng không được để trống");
+        if (!$("#txtMinTotal").val().trim()) {
+            ShowError("Số tiền tối thiểu của hóa đơn không được để trống!");
             return false;
         }
-        if (parseInt($("#txtVoucherCount").val().trim()) < 0) {
-            ShowError("Số lượng phải lớn hơn 0");
+        
+        if (parseInt($("#txtMinTotal").val().trim()) < 0) {
+            ShowError("Số tiền tối thiểu của hóa đơn phải là số lớn hơn hoặc bằng 0!");
             return false;
         }
         if (!$("#txtDescription").val().trim()) {
-            ShowError("Mô tả không được để trống");
+            ShowError("Mô tả không được bỏ trống!");
             return false;
         }
-
+        if (!$("#txtVoucherCount").val()) {
+            ShowError("Số lượng không được bỏ trống!");
+            return false;
+        }
+        if (parseInt($("#txtVoucherCount").val().trim()) < 0) {
+            ShowError("Số lượng phải là số nguyên lớn hơn 0!");
+            return false;
+        }
+        
         return true;
     }
 

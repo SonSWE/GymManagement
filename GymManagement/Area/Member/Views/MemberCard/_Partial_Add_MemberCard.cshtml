@@ -302,30 +302,30 @@
     });
 
     function Validate() {
+        if (!$('#txtName').val()) {
+            ShowError("Tên không được để trống!");
+            return false;
+        }
+        if (containsSpecialChars($("#txtName").val().trim()) ) {
+            ShowError("Tên khách hàng không được chứa ký tự đặc biệt!");
+            return false;
+        }
+
         if (!$('#avatar').prop('files')[0]) {
             ShowError("Bạn phải chọn ảnh đại diện");
             return false;
         }
 
-        if (!$('#txtName').val()) {
-            ShowError("Họ và tên không được để trống");
-            return false;
-        }
-
-        if (!$('#slSex').val()) {
-            ShowError("Giới tính không được để trống");
-            return false;
-        }
-        if (!$('#txtBirthday').val()) {
-            ShowError("Ngày sinh không được để trống");
-            return false;
-        }
-        if (!$('#txtAddress').val()) {
-            ShowError("Địa chỉ không được để trống");
+        if (!$('#avatar').prop('files')[0].size > 200) {
+            ShowError("Ảnh có kích thước quá lớn");
             return false;
         }
         if (!$('#txtIdentity').val()) {
-            ShowError("Số CCCD không được để trống");
+            ShowError("CCCD không được để trống!");
+            return false;
+        }
+        if (containsSpecialChars($("#txtIdentity").val().trim())) {
+            ShowError("CCCD chứa ký tự đặc biệt hoặc có chứa chữ!");
             return false;
         }
         if (!$('#txtIdentityAddress').val()) {
@@ -336,12 +336,45 @@
             ShowError("Ngày cấp CCCD không được để trống");
             return false;
         }
-        if (!$('#txtPhone').val()) {
-            ShowError("Số điện thoại không được để trống");
+        if (!$('#txtEmail').val()) {
+            ShowError("Email không được để trống!");
             return false;
         }
-        if (!$('#slStatus').val()) {
-            ShowError("Trạng thái không được để trống");
+        if (containsSpecialChars($("#txtEmail").val().trim())) {
+            ShowError("Email chứa ký tự đặc biệt!");
+            return false;
+        }
+        if (!isEmail($('#txtEmail').val())) {
+            ShowError("Email phải chứa định dạng @@gmail.com!");
+            return false;
+        }
+        if (!$('#txtAddress').val()) {
+            ShowError("Địa chỉ không được để trống!");
+            return false;
+        }
+        if (!$('#slSex').val()) {
+            ShowError("Giới tính không được để trống!");
+            return false;
+        }
+        if (!$('#txtBirthday').val()) {
+            ShowError("Ngày sinh không được để trống!");
+            return false;
+        }
+
+        if (!$('#txtPhone').val()) {
+            ShowError("Số điện thoại không được để trống!");
+            return false;
+        }
+        if (containsSpecialChars($("#txtPhone").val().trim())) {
+            ShowError("Số điện chứa ký tự chữ hoặc có ký tự đặc biệt!");
+            return false;
+        }
+        if (!isPhone($('#txtPhone').val())) {
+            ShowError("Số điện thoại không đúng định dạng!");
+            return false;
+        }
+        if (!$('#slTypeMember').val()) {
+            ShowError("Loại khách hàng không được để trống");
             return false;
         }
         return true;
